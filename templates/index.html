@@ -4,7 +4,17 @@
     <title>Flask Image App</title>
 </head>
 <body>
-    <h1>Image from JSON</h1>
-    <img src="{{ image_path }}" alt="Image">
+    <ol id="Maps">
+        <li><a href="{{url_for('ascent')}}">Ascent</a></li>
+        <li><a href="{{url_for('split')}}">Split</a></li>
+        <li><a href="{{url_for('fracture')}}">Fracture</a></li>
+        <li><a href="{{url_for('bind')}}">Bind</a></li>
+        <li><a href="{{url_for('breeze')}}">Breeze</a></li>
+        <li><a href="{{url_for('lotus')}}">Lotus</a></li>
+        <li><a href="{{url_for('pearl')}}">Pearl</a></li>
+        <li><a href="{{url_for('icebox')}}">Icebox</a></li>
+        <li><a href="{{url_for('haven')}}">Haven</a></li>
+    </ol>
+
 </body>
 </html>
