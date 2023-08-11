@@ -27,3 +27,4 @@ kills based on positioning (x, y), to show if you play too aggro, push too much,
 	-what direction both people were facing during the fight (if you were shot in the back, etc)
 how often you were flashed
 how much damage you did, vs other people (did you kill get 'stolen')?
+most common death spots
