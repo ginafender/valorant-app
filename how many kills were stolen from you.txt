@@ -1,0 +1,29 @@
+valorant app ideas:
+
+how many kills were stolen from you in your game?
+
+have different rankings based on how much damage you did - how hard was the kill stolen from you
+
+distance vs kills accuracy?
+
+how many kills you got while crouching
+
+
+data analysis ideas high elo vs low elo:
+rounds won with util (lineups?)
+rounds won by kills/spike 
+defender kills outside of spawn vs defender kills on site
+top most used guns
+most common plant locations and how often they were defused
+around what time on the clock is spike planted
+
+
+
+list where you get most of your kills on each map (location, on site vs off site, are you an aggressive player, etc)
+
+
+OFFICIAL IDEAS:
+kills based on positioning (x, y), to show if you play too aggro, push too much, etc
+	-what direction both people were facing during the fight (if you were shot in the back, etc)
+how often you were flashed
+how much damage you did, vs other people (did you kill get 'stolen')?
