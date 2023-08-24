@@ -19,7 +19,7 @@ def ascent():
         data = json.load(json_file)
     image_path  = data['data'][0]['displayIcon']
     return render_template('ascent.html', image_path=image_path)
-
+ 
 #######################################################################
 #################### SPLIT ############################################
 
