@@ -16,9 +16,23 @@ def home():
 @app.route("/ascent")
 def ascent():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        data = json.load(json_file)
-    image_path  = data['data'][0]['displayIcon']
-    return render_template('ascent.html', image_path=image_path)
+        maps = json.load(json_file)
+    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+        match_data = json.load(map_file)
+
+    mapURL = '/Game/Maps/Ascent/Ascent'
+    death_coordinates = [death for death in match_data if death['mapUrl'] == mapURL]
+
+    mini_map_coordinates = []
+    for death in death_coordinates:
+        mini_x = death['game_y'] * maps['xMultiplier'] + maps['xScalarToAdd']
+        mini_y = death['game_x'] * maps['yMultiplier'] + maps['yScalarToAdd']
+        mini_x *= mini_map_image_width
+        mini_y *= mini_map_image_height
+        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
+
+    image_path  = maps['data'][0]['displayIcon']
+    return render_template('ascent.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates)
  
 #######################################################################
 #################### SPLIT ############################################
@@ -26,8 +40,8 @@ def ascent():
 @app.route("/split")
 def split():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        data = json.load(json_file)
-    image_path  = data['data'][1]['displayIcon']
+        maps = json.load(json_file)
+    image_path  = maps['data'][1]['displayIcon']
     return render_template('split.html', image_path=image_path)
 
 #######################################################################
@@ -36,8 +50,8 @@ def split():
 @app.route("/fracture")
 def fracture():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        data = json.load(json_file)
-    image_path  = data['data'][2]['displayIcon']
+        maps = json.load(json_file)
+    image_path  = maps['data'][2]['displayIcon']
     return render_template('fracture.html', image_path=image_path)
 
 #######################################################################
@@ -46,8 +60,8 @@ def fracture():
 @app.route("/bind")
 def bind():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        data = json.load(json_file)
-    image_path  = data['data'][3]['displayIcon']
+        maps = json.load(json_file)
+    image_path  = maps['data'][3]['displayIcon']
     return render_template('bind.html', image_path=image_path)
 
 #######################################################################
@@ -56,8 +70,8 @@ def bind():
 @app.route("/breeze")
 def breeze():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        data = json.load(json_file)
-    image_path  = data['data'][4]['displayIcon']
+        maps = json.load(json_file)
+    image_path  = maps['data'][4]['displayIcon']
     return render_template('breeze.html', image_path=image_path)
 
 
@@ -67,8 +81,8 @@ def breeze():
 @app.route("/lotus")
 def lotus():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        data = json.load(json_file)
-    image_path  = data['data'][8]['displayIcon']
+        maps = json.load(json_file)
+    image_path  = maps['data'][8]['displayIcon']
     return render_template('lotus.html', image_path=image_path)
 
 #######################################################################
@@ -77,8 +91,8 @@ def lotus():
 @app.route("/pearl")
 def pearl():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        data = json.load(json_file)
-    image_path  = data['data'][9]['displayIcon']
+        maps = json.load(json_file)
+    image_path  = maps['data'][9]['displayIcon']
     return render_template('pearl.html', image_path=image_path)
 
 #######################################################################
@@ -87,8 +101,8 @@ def pearl():
 @app.route("/icebox")
 def icebox():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        data = json.load(json_file)
-    image_path  = data['data'][10]['displayIcon']
+        maps = json.load(json_file)
+    image_path  = maps['data'][10]['displayIcon']
     return render_template('icebox.html', image_path=image_path)
 
 #######################################################################
@@ -97,8 +111,8 @@ def icebox():
 @app.route("/haven")
 def haven():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        data = json.load(json_file)
-    image_path  = data['data'][12]['displayIcon']
+        maps = json.load(json_file)
+    image_path  = maps['data'][12]['displayIcon']
     return render_template('haven.html', image_path=image_path)
 
 if __name__ == "__main__":
