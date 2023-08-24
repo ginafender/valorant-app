@@ -1,5 +1,8 @@
+""" 
+Flask app for each individual map.
+"""
 import json
-from flask import Flask, render_template, flash, redirect, url_for
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -21,18 +24,9 @@ def ascent():
         match_data = json.load(map_file)
 
     mapURL = '/Game/Maps/Ascent/Ascent'
-    death_coordinates = [death for death in match_data if death['mapUrl'] == mapURL]
-
-    mini_map_coordinates = []
-    for death in death_coordinates:
-        mini_x = death['y'] * maps['xMultiplier'] + maps['xScalarToAdd']
-        mini_y = death['x'] * maps['yMultiplier'] + maps['yScalarToAdd']
-        mini_x *= 1024
-        mini_y *= 1024
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
 
     image_path  = maps['data'][0]['displayIcon']
-    return render_template('ascent.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates)
+    return render_template('ascent.html', image_path=image_path)
 
 
 #######################################################################
