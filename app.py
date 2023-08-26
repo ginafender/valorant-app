@@ -15,7 +15,6 @@ def home():
 
 #######################################################################
 #################### ASCENT ###########################################
-
 @app.route("/ascent")
 def ascent():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
@@ -43,6 +42,7 @@ def ascent():
                     if 'victimLocation' in kill:
                         victim_location = kill['victimLocation']
                         death_coordinates.append(victim_location)
+
     map_data = maps['data'][0]
     x_Multiplier = map_data['xMultiplier']
     y_Multiplier = map_data['yMultiplier']
@@ -53,8 +53,6 @@ def ascent():
     for death in death_coordinates:
         mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
         mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_x *= 1024
-        mini_y *= 1024
         mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
 
     image_path  = "valorant-app/static/map_images/ascent_image.png"
@@ -64,7 +62,6 @@ def ascent():
 
 #######################################################################
 #################### SPLIT ############################################
-
 @app.route("/split")
 def split():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
@@ -74,13 +71,50 @@ def split():
 
 #######################################################################
 #################### FRACTURE #########################################
-
 @app.route("/fracture")
 def fracture():
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
         maps = json.load(json_file)
-    image_path  = maps['data'][2]['displayIcon']
-    return render_template('fracture.html', image_path=image_path)
+    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+        match_data = json.load(map_file)
+
+    mapURL = "/Game/Maps/Canyon/Canyon"
+    death_coordinates = []
+    round_results = []
+
+    matches = match_data['matches']
+    # Iterate through rounds and their results
+    for match in matches:
+        if match['matchInfo']['mapId'] == mapURL:
+            round_results = match['roundResults']
+
+        # Iterate through player stats for each round
+        for round_result in round_results:
+            for player_stat in round_result['playerStats']:
+                kills = player_stat['kills']
+
+                # Iterate through kills for each player
+                for kill in kills:
+                    if 'victimLocation' in kill:
+                        victim_location = kill['victimLocation']
+                        death_coordinates.append(victim_location)
+
+    map_data = maps['data'][2]
+    x_Multiplier = map_data['xMultiplier']
+    y_Multiplier = map_data['yMultiplier']
+    x_ScalarToAdd = map_data['xScalarToAdd']
+    y_ScalarToAdd = map_data['yScalarToAdd']
+
+    mini_map_coordinates = []
+    for death in death_coordinates:
+        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
+        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
+        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
+
+    image_path  = "valorant-app/static/map_images/fracture_image.png"
+    return render_template('fracture.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
+                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
+                            y_ScalarToAdd=y_ScalarToAdd)
 
 #######################################################################
 #################### BIND #############################################

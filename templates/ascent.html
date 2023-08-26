@@ -19,7 +19,7 @@
     <h1>ASCENT</h1>
     <div id="mapContainer">
         <div id="mapContainer">
-            <img id="mapImage" src="{{ url_for('static', filename=image_path) }}" alt="Image">
+            <img id="mapImage" src="{{ url_for('static', filename='map_images/ascent_image.png') }}" alt="Image">
             {% for coordinate in mini_map_coordinates %}
                 <div class="coordinateMarker"></div>
             {% endfor %}
@@ -53,11 +53,12 @@
         var markers = document.querySelectorAll('.coordinateMarker');
         markers.forEach(function(marker, index) {
             //console.log("Loop iteration:", index)
-            var mini_map_coordinates = {{mini_map_coordinates, tojson}};
+            var mini_map_coordinates = {{mini_map_coordinates | tojson}};
             var coordinate = mini_map_coordinates[index];
-            var mini_x = coordinate.y * mapWidth;
-            var mini_y = coordinate.x * mapHeight;
+            var mini_x = coordinate.x * mapWidth;
+            var mini_y = coordinate.y * mapHeight;
             setPosition(marker, mini_x, mini_y);
+            //console.log("Setting position for marker:", marker, "x:", mini_x, "y:", mini_y);
         });
     };
 </script>
