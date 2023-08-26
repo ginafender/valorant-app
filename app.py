@@ -2,7 +2,7 @@
 Flask app for each individual map.
 """
 import json
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 
 app = Flask(__name__)
 
@@ -57,7 +57,7 @@ def ascent():
         mini_y *= 1024
         mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
 
-    image_path  = map_data['displayIcon']
+    image_path  = "valorant-app/static/map_images/ascent_image.png"
     return render_template('ascent.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
                             x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
                             y_ScalarToAdd=y_ScalarToAdd)

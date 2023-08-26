@@ -8,8 +8,8 @@
         }
         .coordinateMarker {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 5px;
+            height: 5px;
             background-color: red;
             border-radius: 50%;
         }
@@ -19,7 +19,7 @@
     <h1>ASCENT</h1>
     <div id="mapContainer">
         <div id="mapContainer">
-            <img id="mapImage" src="{{ image_path }}" alt="Image">
+            <img id="mapImage" src="{{ url_for('static', filename=image_path) }}" alt="Image">
             {% for coordinate in mini_map_coordinates %}
                 <div class="coordinateMarker"></div>
             {% endfor %}
@@ -32,17 +32,33 @@
 
     // Function to set the position of a coordinate marker
     function setPosition(marker, x, y) {
+        //console.log("Setting position for marker:", marker, "x:", x, "y:", y);
         marker.style.left = x + 'px';
         marker.style.top = y + 'px';
     }
 
-    // Loop through each coordinate marker and set its position
-    var markers = document.querySelectorAll('.coordinateMarker');
-    markers.forEach(function(marker, index) {
-        var coordinate = mini_map_coordinates[index];
-        var mini_x = coordinate.x * x_Multiplier + x_ScalarToAdd;
-        var mini_y = coordinate.y * y_Multiplier + y_ScalarToAdd;
-        setPosition(marker, mini_x, mini_y);
-    });
+    // Wait for the map image to load
+    mapImage.onload = function() {
+        // Get the map image dimensions
+        var mapWidth = mapImage.width;
+        var mapHeight = mapImage.height;
+
+        // Define the variables
+        var x_Multiplier = {{ x_Multiplier }};
+        var y_Multiplier = {{ y_Multiplier }};
+        var x_ScalarToAdd = {{ x_ScalarToAdd }};
+        var y_ScalarToAdd = {{ y_ScalarToAdd }};
+
+        // Loop through each coordinate marker and set its position
+        var markers = document.querySelectorAll('.coordinateMarker');
+        markers.forEach(function(marker, index) {
+            //console.log("Loop iteration:", index)
+            var mini_map_coordinates = {{mini_map_coordinates, tojson}};
+            var coordinate = mini_map_coordinates[index];
+            var mini_x = coordinate.y * mapWidth;
+            var mini_y = coordinate.x * mapHeight;
+            setPosition(marker, mini_x, mini_y);
+        });
+    };
 </script>
 </html>
