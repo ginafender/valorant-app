@@ -24,21 +24,43 @@ def ascent():
         match_data = json.load(map_file)
 
     mapURL = '/Game/Maps/Ascent/Ascent'
-    coords = match_data['matches']['roundResults']['playerStats']['kills']['victimLocation']
-    death_coordinates = [death for death in match_data if death['mapUrl'] == mapURL]
+    death_coordinates = []
+    round_results = []
+
+    matches = match_data['matches']
+    # Iterate through rounds and their results
+    for match in matches:
+        if match['matchInfo']['mapId'] == mapURL:
+            round_results = match['roundResults']
+
+        # Iterate through player stats for each round
+        for round_result in round_results:
+            for player_stat in round_result['playerStats']:
+                kills = player_stat['kills']
+
+                # Iterate through kills for each player
+                for kill in kills:
+                    if 'victimLocation' in kill:
+                        victim_location = kill['victimLocation']
+                        death_coordinates.append(victim_location)
+    map_data = maps['data'][0]
+    x_Multiplier = map_data['xMultiplier']
+    y_Multiplier = map_data['yMultiplier']
+    x_ScalarToAdd = map_data['xScalarToAdd']
+    y_ScalarToAdd = map_data['yScalarToAdd']
 
     mini_map_coordinates = []
     for death in death_coordinates:
-        mini_x = death['y'] * maps['xMultiplier'] + maps['xScalarToAdd']
-        mini_y = death['x'] * maps['yMultiplier'] + maps['yScalarToAdd']
+        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
+        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
         mini_x *= 1024
         mini_y *= 1024
         mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
 
-    image_path  = maps['data'][0]['displayIcon']
-    return render_template('ascent.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates)
-
-
+    image_path  = map_data['displayIcon']
+    return render_template('ascent.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
+                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
+                            y_ScalarToAdd=y_ScalarToAdd)
 
 #######################################################################
 #################### SPLIT ############################################

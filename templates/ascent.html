@@ -2,11 +2,47 @@
 <html>
 <head>
     <title>Flask Image App</title>
+    <style>
+        #mapContainer {
+            position: relative;
+        }
+        .coordinateMarker {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
-
     <h1>ASCENT</h1>
-    <img src="{{ image_path }}" alt="Image">
-
+    <div id="mapContainer">
+        <div id="mapContainer">
+            <img id="mapImage" src="{{ image_path }}" alt="Image">
+            {% for coordinate in mini_map_coordinates %}
+                <div class="coordinateMarker"></div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
+<script>
+    // Get the map image element
+    var mapImage = document.getElementById('mapImage');
+
+    // Function to set the position of a coordinate marker
+    function setPosition(marker, x, y) {
+        marker.style.left = x + 'px';
+        marker.style.top = y + 'px';
+    }
+
+    // Loop through each coordinate marker and set its position
+    var markers = document.querySelectorAll('.coordinateMarker');
+    markers.forEach(function(marker, index) {
+        var coordinate = mini_map_coordinates[index];
+        var mini_x = coordinate.x * x_Multiplier + x_ScalarToAdd;
+        var mini_y = coordinate.y * y_Multiplier + y_ScalarToAdd;
+        setPosition(marker, mini_x, mini_y);
+    });
+</script>
 </html>
