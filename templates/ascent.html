@@ -5,7 +5,10 @@
     <style>
         body {
             background-color: #357343;
+            margin: 0;
+            padding: 0;
             font-family: 'Courier New', monospace;
+            font-weight: bold;
         }
         #mapContainer {
             position: relative;
@@ -20,10 +23,30 @@
             background-color: red;
             border-radius: 50%;
         }
+        #header {
+            background-image: url("{{ url_for('static', filename='map_images/ascent_splash.png') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center top 33%;
+            text-align: center;
+            padding: 60px;
+        }
+        #header h1{
+            color: antiquewhite;
+            font-weight: bolder;
+            background-color: rgba(33, 33, 33, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            position: relative;
+            top: 30px
+        }
     </style>
 </head>
 <body>
-    <h1><center><strong>ASCENT</strong></center></h1>
+    <div id="header">
+        <h1>ASCENT</h1>
+    </div>
     <div id="mapContainer">
         <div id="mapContainer">
             <img id="mapImage" src="{{ url_for('static', filename='map_images/ascent_image.png') }}" alt="Image">

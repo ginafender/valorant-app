@@ -2,10 +2,94 @@
 <html>
 <head>
     <title>Flask Image App</title>
+    <style>
+        body {
+            background-color: #357343;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        #mapContainer {
+            position: relative;
+        }
+        #mapImage {
+            display: inline-block;
+        }
+        .coordinateMarker {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: red;
+            border-radius: 50%;
+        }
+        #header {
+            background-image: url("{{ url_for('static', filename='map_images/haven_splash.png') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center top 33%;
+            text-align: center;
+            padding: 60px;
+        }
+        #header h1{
+            color: antiquewhite;
+            font-weight: bolder;
+            background-color: rgba(33, 33, 33, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            position: relative;
+            top: 30px
+        }
+    </style>
 </head>
 <body>
-
-    <h1>HAVEN</h1>
-    <img src="{{ image_path }}" alt="Image">
+    <div id="header">
+        <h1>HAVEN</h1>
+    </div>
+    <div id="mapContainer">
+        <div id="mapContainer">
+            <img id="mapImage" src="{{ url_for('static', filename='map_images/haven_image.png') }}" alt="Image">
+            {% for coordinate in mini_map_coordinates %}
+                <div class="coordinateMarker"></div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
+<script>
+    // Get the map image element
+    var mapImage = document.getElementById('mapImage');
+
+    // Function to set the position of a coordinate marker
+    function setPosition(marker, x, y) {
+        //console.log("Setting position for marker:", marker, "x:", x, "y:", y);
+        marker.style.left = x + 'px';
+        marker.style.top = y + 'px';
+    }
+
+    // Wait for the map image to load
+    mapImage.onload = function() {
+        // Get the map image dimensions
+        var mapWidth = mapImage.width;
+        var mapHeight = mapImage.height;
+
+        // Define the variables
+        var x_Multiplier = {{ x_Multiplier }};
+        var y_Multiplier = {{ y_Multiplier }};
+        var x_ScalarToAdd = {{ x_ScalarToAdd }};
+        var y_ScalarToAdd = {{ y_ScalarToAdd }};
+
+        // Loop through each coordinate marker and set its position
+        var markers = document.querySelectorAll('.coordinateMarker');
+        markers.forEach(function(marker, index) {
+            //console.log("Loop iteration:", index)
+            var mini_map_coordinates = {{mini_map_coordinates | tojson}};
+            var coordinate = mini_map_coordinates[index];
+            var mini_x = coordinate.x * mapWidth;
+            var mini_y = coordinate.y * mapHeight;
+            setPosition(marker, mini_x, mini_y);
+            //console.log("Setting position for marker:", marker, "x:", mini_x, "y:", mini_y);
+        });
+    };
+</script>
 </html>
