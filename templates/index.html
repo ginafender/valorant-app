@@ -1,20 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <style>
+        body {
+            background-color: #357343;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+        }
+        #header {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+        #tabs {
+            background-color: #444;
+            padding: 10px;
+            text-align: center;
+        }
+        #tabs a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            margin: 0 10px;
+        }
+        #tabs a:hover {
+            background-color: #666;
+        }
+        #content {
+            padding: 20px;
+            color: white;
+        }
+    </style>
     <title>Flask Image App</title>
 </head>
 <body>
-    <ol id="Maps">
-        <li><a href="{{url_for('ascent')}}">Ascent</a></li>
-        <li><a href="{{url_for('split')}}">Split</a></li>
-        <li><a href="{{url_for('fracture')}}">Fracture</a></li>
-        <li><a href="{{url_for('bind')}}">Bind</a></li>
-        <li><a href="{{url_for('breeze')}}">Breeze</a></li>
-        <li><a href="{{url_for('lotus')}}">Lotus</a></li>
-        <li><a href="{{url_for('pearl')}}">Pearl</a></li>
-        <li><a href="{{url_for('icebox')}}">Icebox</a></li>
-        <li><a href="{{url_for('haven')}}">Haven</a></li>
-    </ol>
-
+    <div id="header">
+        <h1>Valorant Maps</h1>
+    </div>
+    <div id="tabs">
+        <a href="{{url_for('ascent')}}">Ascent</a>
+        <a href="{{url_for('split')}}">Split</a>
+        <a href="{{url_for('fracture')}}">Fracture</a>
+        <a href="{{url_for('bind')}}">Bind</a>
+        <a href="{{url_for('breeze')}}">Breeze</a>
+        <a href="{{url_for('lotus')}}">Lotus</a>
+        <a href="{{url_for('pearl')}}">Pearl</a>
+        <a href="{{url_for('icebox')}}">Icebox</a>
+        <a href="{{url_for('haven')}}">Haven</a>
+    </div>
 </body>
 </html>

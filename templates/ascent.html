@@ -3,8 +3,15 @@
 <head>
     <title>Flask Image App</title>
     <style>
+        body {
+            background-color: #357343;
+            font-family: 'Courier New', monospace;
+        }
         #mapContainer {
             position: relative;
+        }
+        #mapImage {
+            display: inline-block;
         }
         .coordinateMarker {
             position: absolute;
@@ -16,7 +23,7 @@
     </style>
 </head>
 <body>
-    <h1>ASCENT</h1>
+    <h1><center><strong>ASCENT</strong></center></h1>
     <div id="mapContainer">
         <div id="mapContainer">
             <img id="mapImage" src="{{ url_for('static', filename='map_images/ascent_image.png') }}" alt="Image">
