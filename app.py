@@ -22,7 +22,7 @@ def ascent():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
-
+###################### DEATH LOCATIONS ###############################
     mapURL = '/Game/Maps/Ascent/Ascent'
     death_coordinates = []
     round_results = []
@@ -60,7 +60,7 @@ def ascent():
     return render_template('ascent.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
                             x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
                             y_ScalarToAdd=y_ScalarToAdd)
-
+###################### AGENT DROPDOWNS ###############################
 #######################################################################
 #################### SPLIT ############################################
 @app.route("/split")
