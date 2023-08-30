@@ -69,20 +69,19 @@
     <div id="mapContainer">
         <div id="mapContainer">
             <img id="mapImage" src="../static/map_images/ascent_image.png" alt="Image">
-            {% for coordinate in mini_map_coordinates %}
-                <div class="coordinateMarker"></div>
-            {% endfor %}
         </div>
     </div>
 </body>
+<script src="../static/js/app.js"></script>
 <script>
+    const map_json = "../json/valorantmaps.json"
     document.addEventListener("DOMContentLoaded", function () {
-
+        console.log("DOMContentLoaded event triggered");
         // map url to pull the correct map
         const mapUrl = '/Game/Maps/Duality/Duality'; 
 
         // fetch maps data
-        fetch(map_url)
+        fetch(map_json)
             .then(response => response.json())
             .then(data => {
                 const map = data.data.find(map => map.name === mapUrl);
@@ -93,6 +92,7 @@
                     deathCoordinates(mapDisplayName);
                 }
             })
+
             .catch(error => {
                 console.error('Error fetching maps data:', error);
             });
@@ -113,22 +113,16 @@
             var mapWidth = mapImage.width;
             var mapHeight = mapImage.height;
 
-            // Define the variables
-            var x_Multiplier = {{ x_Multiplier }};
-            var y_Multiplier = {{ y_Multiplier }};
-            var x_ScalarToAdd = {{ x_ScalarToAdd }};
-            var y_ScalarToAdd = {{ y_ScalarToAdd }};
-
             // Loop through each coordinate marker and set its position
-            var markers = document.querySelectorAll('.coordinateMarker');
-            markers.forEach(function(marker, index) {
-                //console.log("Loop iteration:", index)
-                var mini_map_coordinates = {{mini_map_coordinates | tojson}};
-                var coordinate = mini_map_coordinates[index];
+            var mapContainer = document.getElementById('mapContainer');
+            mini_map_coordinates.forEach(function(coordinate) {
+                var marker = document.createElement('div');
+                marker.className = 'coordinateMarker';
                 var mini_x = coordinate.x * mapWidth;
                 var mini_y = coordinate.y * mapHeight;
                 setPosition(marker, mini_x, mini_y);
-                //console.log("Setting position for marker:", marker, "x:", mini_x, "y:", mini_y);
+                console.log("Setting position for marker:", marker, "x:", mini_x, "y:", mini_y);
+                mapContainer.appendChild(marker);
             });
         };
     });

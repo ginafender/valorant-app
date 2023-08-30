@@ -1,8 +1,10 @@
-const match_url = "http://stelar7.no/valorant/eu/1641211632.json";
-const map_url = "https://valorant-api.com/v1/maps";
-const character_url = "https://valorant-api.com/v1/agents";
+const match_url = "../json/valorantmatches.json";
+const map_url = "../json/valorantmaps.json";
+const character_url = "../json/valorantcharacters.json";
 
 // Get all death coordinates
+const mini_map_coordinates = [];
+
 function deathCoordinates(mapName) {
     Promise.all([
         d3.json(match_url),
@@ -38,11 +40,11 @@ function deathCoordinates(mapName) {
         const yMulti = data02.data.yMultiplier;
         const yScalar = data02.data.yScalarToAdd;
 
-        const mini_map_coordinates = [];
         for (const death of deathsLocations) {
             const mini_x = death.y * xMulti + xScalar;
             const mini_y = death.x * yMulti + yScalar;
             mini_map_coordinates.push({ 'x': mini_x, 'y': mini_y });
+            console.log("Adding coordinates:", { 'x: ': mini_x, 'y: ': mini_y})
         }
     });
 }
