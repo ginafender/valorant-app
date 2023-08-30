@@ -1,6 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Valorant App</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
             background-color: #357343;
@@ -10,7 +16,7 @@
             font-weight: bold;
         }
         #header {
-            background-image: url("{{ url_for('static', filename='website_images/tabs-background.jpg') }}");
+            background-image: url("../static/website_images/tabs-background.jpg");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center top 33%;
@@ -47,7 +53,6 @@
             color: white;
         }
     </style>
-    <title>Flask Image App</title>
 </head>
 <body>
     <div id="header">
@@ -64,6 +69,7 @@
         <a href="{{url_for('icebox')}}">Icebox</a>
         <a href="{{url_for('haven')}}">Haven</a>
     </div>
+
 </body>
 </html>
 <!-- COMMENTED OUT PEARL AND LOTUS BECAUSE THIS IS AN OLD DATA SET AND THERE IS NO 
