@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Ascent</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
             background-color: #357343;
@@ -71,60 +70,14 @@
             <img id="mapImage" src="../static/map_images/ascent_image.png" alt="Image">
         </div>
     </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="../static/js/app.js"></script>
+    <script>
+        const mapUrl = '/Game/Maps/Ascent/Ascent';
+        document.addEventListener("DOMContentLoaded", function(){
+            // console.log("DOMContentLoaded event fired 2")
+            deathCoordinatesAscent();
+        });
+    </script>
 </body>
-<script src="../static/js/app.js"></script>
-<script>
-    const map_json = "../json/valorantmaps.json"
-    document.addEventListener("DOMContentLoaded", function () {
-        console.log("DOMContentLoaded event triggered");
-        // map url to pull the correct map
-        const mapUrl = '/Game/Maps/Duality/Duality'; 
-
-        // fetch maps data
-        fetch(map_json)
-            .then(response => response.json())
-            .then(data => {
-                const map = data.data.find(map => map.name === mapUrl);
-                const mapDisplayName = map ? map.displayName : null;
-
-                if (mapDisplayName) {
-                    // Call the deathCoordinates function with the extracted map name
-                    deathCoordinates(mapDisplayName);
-                }
-            })
-
-            .catch(error => {
-                console.error('Error fetching maps data:', error);
-            });
-
-        // Get the map image element
-        var mapImage = document.getElementById('mapImage');
-
-        // Function to set the position of a coordinate marker
-        function setPosition(marker, x, y) {
-            //console.log("Setting position for marker:", marker, "x:", x, "y:", y);
-            marker.style.left = x + 'px';
-            marker.style.top = y + 'px';
-        }
-
-        // Wait for the map image to load
-        mapImage.onload = function() {
-            // Get the map image dimensions
-            var mapWidth = mapImage.width;
-            var mapHeight = mapImage.height;
-
-            // Loop through each coordinate marker and set its position
-            var mapContainer = document.getElementById('mapContainer');
-            mini_map_coordinates.forEach(function(coordinate) {
-                var marker = document.createElement('div');
-                marker.className = 'coordinateMarker';
-                var mini_x = coordinate.x * mapWidth;
-                var mini_y = coordinate.y * mapHeight;
-                setPosition(marker, mini_x, mini_y);
-                console.log("Setting position for marker:", marker, "x:", mini_x, "y:", mini_y);
-                mapContainer.appendChild(marker);
-            });
-        };
-    });
-</script>
 </html>

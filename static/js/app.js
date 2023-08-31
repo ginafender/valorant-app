@@ -1,50 +1,82 @@
-const match_url = "../json/valorantmatches.json";
-const map_url = "../json/valorantmaps.json";
-const character_url = "../json/valorantcharacters.json";
+// function setPosition(element, x, y) {
+//     element.style.left = x + 'px';
+//     element.style.top = y + 'px';
+// }
+// // console.log("DOMContentLoaded event fired");
 
-// Get all death coordinates
-const mini_map_coordinates = [];
+// function deathCoordinatesAscent() {
+//     // console.log("Function called");
 
-function deathCoordinates(mapName) {
-    Promise.all([
-        d3.json(match_url),
-        d3.json(map_url)
-    ]).then(function([data01, data02]){
-        let matches = data01.data.matches;
-        let mapId = data02.data.find(map => map.displayName === mapName).uuid;
-        let deathsLocations = [];
+//     fetch("../json/valorantmatches.json")
+//         .then(response => response.json())
+//         .then(data01 => {
+//             return Promise.all([
+//                 data01,
+//                 fetch("../json/valorantmaps.json").then(response => response.json())
+//             ]);
+//         })
+//             .then(([data01, data02]) => {
+//                 const matches = data01.matches;
+//                 const deathsLocations = [];
+//                 const mapUrl = "/Game/Maps/Ascent/Ascent";
+//                 const mapContainer = document.getElementById('mapContainer'); 
 
-        for (const match of matches) {
-            // Iterate through rounds and their results
-            if (match.matchInfo.mapId === mapId){ 
-                let roundResults = match.roundResults;
+//                 if (data02 && data02.data) {
+//                     const mapData = data02.data.find(map => map.mapUrl === mapUrl);
 
-                // Iterate through player stats for each round
-                for (const roundResult of roundResults) {
-                    for (const player_stat of roundResult.playerStats) {
-                        const kills = playerStat.kills;
-                        
-                    // Iterate through kills for each player
-                        for (const kill of kills) {
-                            if ('victimLocation' in kill) {
-                                const victim_location = kill.victimLocation;
-                                deathsLocations.push(victim_location);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        const xMulti = data02.data.xMultiplier;
-        const xScalar = data02.data.xScalarToAdd;
-        const yMulti = data02.data.yMultiplier;
-        const yScalar = data02.data.yScalarToAdd;
+//                     if (mapData) {
+//                         const xMulti = mapData.xMultiplier;
+//                         const xScalar = mapData.xScalarToAdd;
+//                         const yMulti = mapData.yMultiplier;
+//                         const yScalar = mapData.yScalarToAdd;
+//                         // console.log("Stuff: ", xMulti, xScalar, yMulti, yScalar);
 
-        for (const death of deathsLocations) {
-            const mini_x = death.y * xMulti + xScalar;
-            const mini_y = death.x * yMulti + yScalar;
-            mini_map_coordinates.push({ 'x': mini_x, 'y': mini_y });
-            console.log("Adding coordinates:", { 'x: ': mini_x, 'y: ': mini_y})
-        }
-    });
-}
+//                         for (const match of matches) {
+//                             if (match.matchInfo.mapId === mapUrl) {
+//                                 const roundResults = match.roundResults;
+
+//                                 for (const roundResult of roundResults) {
+//                                     for (const player_stat of roundResult.playerStats) {
+//                                         const kills = player_stat.kills;
+
+//                                         for (const kill of kills) {
+//                                             if ('victimLocation' in kill) {
+//                                                 const victim_location = kill.victimLocation;
+//                                                 deathsLocations.push(victim_location);
+//                                                 // console.log(deathsLocations);
+//                                             }
+//                                         }
+//                                     }
+//                                 }
+//                             }
+//                         }
+
+//                         const mapImage = document.getElementById('mapImage');
+//                         mapImage.onload = function () {
+//                             console.log("Map Image loaded")
+//                             const mapWidth = mapImage.width;
+//                             const mapHeight = mapImage.height;
+
+//                             deathsLocations.forEach(death => {
+//                                 const mini_x = death.y * xMulti + xScalar;
+//                                 const mini_y = death.x * yMulti + yScalar;
+//                                 console.log("x: ", mini_x, "y: ", mini_y)
+
+//                                 const marker = document.createElement('div');
+//                                 marker.className = 'coordinateMarker';
+//                                 setPosition(marker, mini_x * mapWidth, mini_y * mapHeight);
+//                                 mapContainer.appendChild(marker);
+//                             });
+//                         };
+//                     } else {
+//                         console.error(`Map data not found for map URL: ${mapUrl}`);
+//                     }
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error('Error fetching match data:', error);
+//             });
+//     }
+// document.addEventListener("DOMContentLoaded", function () {
+//     deathCoordinatesAscent();
+// });
