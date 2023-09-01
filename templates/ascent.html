@@ -16,14 +16,16 @@
         }
         #mapContainer {
             position: relative;
+            width: 1024px;
+            height: 1024px;
         }
         #mapImage {
             display: inline-block;
         }
         .coordinateMarker {
             position: absolute;
-            width: 5px;
-            height: 5px;
+            width: 10px;
+            height: 10px;
             background-color: red;
             border-radius: 50%;
         }
@@ -59,25 +61,146 @@
             padding: 25px;
             color: white;
         }
+        #filterContainer {
+            position: absolute;
+            top: 20px;
+            left: 1200px;
+            font-weight: bolder;
+            background-color: rgba(33, 33, 33, 0.3);
+            padding: 10px 30px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        #tier-select {
+            width: 120px;
+            height: 30px;
+            border: 1px solid #999;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1c87c9;
+            background-color: #eee;
+            border-radius: 5px;
+        }
+        #homeLink {
+            position: relative;
+            top: 20px;
+            bottom: 40px;
+        }
     </style>
 </head>
 <body>
+    <!-- <p>{{ testData }}</p> -->
     <div id="header">
         <h1>ASCENT</h1>
-    </div>
-    <div id="mapContainer">
-        <div id="mapContainer">
-            <img id="mapImage" src="../static/map_images/ascent_image.png" alt="Image">
+        <div id="homeLink">
+            <a href="{{ url_for('home') }}">Home</a>
         </div>
     </div>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="../static/js/app.js"></script>
+    <div id="mapContainer">
+        <img id="mapImage" src="{{ url_for('static', filename='map_images/ascent_image.png') }}" alt="Image" width="1024" height="1024">
+        {% for coordinate in mini_map_coordinates %}
+            <div class="coordinateMarker"></div>
+        {% endfor %}
+        <!-- DROP DOWN BOXES -->
+        <div id="filterContainer">
+            <form id="filterForm" method="post">
+                <label for="selected_tier">Select Competitive Tier:</label>
+                <select name="selected_tier" id="selected_tier">
+                    <option value="UNRANKED">UNRANKED</option>
+                    <option value="IRON_1">IRON 1</option>
+                    <option value="IRON_2">IRON 2</option>
+                    <option value="IRON_3">IRON 3</option>
+                    <option value="BRONZE_1">BRONZE 1</option>
+                    <option value="BRONZE_2">BRONZE 2</option>
+                    <option value="BRONZE_3">BRONZE 3</option>
+                    <option value="SILVER_1">SILVER 1</option>
+                    <option value="SILVER_2">SILVER 2</option>
+                    <option value="SILVER_3">SILVER 3</option>
+                    <option value="GOLD_1">GOLD 1</option>
+                    <option value="GOLD_2">GOLD 2</option>
+                    <option value="GOLD_3">GOLD 3</option>
+                    <option value="PLATINUM_1">PLATINUM 1</option>
+                    <option value="PLATINUM_2">PLATINUM 2</option>
+                    <option value="PLATINUM_3">PLATINUM 3</option>
+                    <option value="DIAMOND_1">DIAMOND 1</option>
+                    <option value="DIAMOND_2">DIAMOND 2</option>
+                    <option value="DIAMOND_3">DIAMOND 3</option>
+                    <option value="IMMORTAL_1">IMMORTAL 1</option>
+                    <option value="IMMORTAL_2">IMMORTAL 2</option>
+                    <option value="IMMORTAL_3">IMMORTAL 3</option>
+                    <option value="RADIANT">RADIANT</option>
+                </select>
+                <input type="submit" value="Filter">
+            </form>
+        </div>
+    </div>
+</body>
     <script>
-        const mapUrl = '/Game/Maps/Ascent/Ascent';
-        document.addEventListener("DOMContentLoaded", function(){
-            // console.log("DOMContentLoaded event fired 2")
-            deathCoordinatesAscent();
+        // Wait for the DOM to be ready
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the map image element
+            var mapImage = document.getElementById('mapImage');
+            var selectedTier = '';
+
+            // Check if mapImage exists
+            if (mapImage) {
+                // Wait for the map image to load
+                mapImage.onload = function() {
+                    // Get the map image dimensions
+                    var mapWidth = mapImage.width;
+                    var mapHeight = mapImage.height;
+
+                    // Function to set the position of a coordinate marker
+                    function setPosition(marker, x, y) {
+                        marker.style.left = x + 'px';
+                        marker.style.top = y + 'px';
+                    }
+
+                    // Function to handle the form submission (filtering)
+                    document.getElementById('filterForm').addEventListener('submit', function (e) {
+                        e.preventDefault(); // Prevent form submission
+
+                        // Get the selected tier from the dropdown
+                        var selectedTier = document.getElementById('selected_tier').value.toLowerCase();
+
+                        // Get the mini_map_coordinates from the template
+                        var mini_map_coordinates = {{ mini_map_coordinates | tojson }};
+
+                        // Log the mini_map_coordinates to check if it's received
+                        console.log('mini_map_coordinates:', mini_map_coordinates);
+
+                        // Loop through each coordinate marker and set its visibility
+                        var markers = document.querySelectorAll('.coordinateMarker');
+                        markers.forEach(function(marker, index) {
+                            var mini_map_coordinates = {{ mini_map_coordinates | tojson }};
+                            var coordinate = mini_map_coordinates[index];
+
+                            var matchingPlayers = [];
+
+                            // Check if the coordinate has players
+                            if (coordinate.players) {
+                                var matchingPlayers = coordinate.players.filter(function(player) {
+                                    return player.competitiveTier.toLowerCase().includes(selectedTier);
+                                });
+
+                                if (matchingPlayers.length > 0) {
+                                    marker.style.display = 'block'; // Show the marker
+                                } else {
+                                    marker.style.display = 'none'; // Hide the marker
+                                }
+                            } else {
+                                marker.style.display = 'none'; // Hide the marker if no players
+                            }
+
+                            // Use the mini_x and mini_y values directly
+                            var mini_x = coordinate.x * mapWidth;
+                            var mini_y = coordinate.y * mapHeight;
+
+                            setPosition(marker, mini_x, mini_y);
+                        });
+                    });
+                };
+            }
         });
     </script>
-</body>
 </html>
