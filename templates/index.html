@@ -1,6 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Valorant App</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
             background-color: #357343;
@@ -10,7 +16,7 @@
             font-weight: bold;
         }
         #header {
-            background-image: url("{{ url_for('static', filename='website_images/tabs-background.jpg') }}");
+            background-image: url("../static/website_images/tabs-background.jpg");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center top 33%;
@@ -47,23 +53,23 @@
             color: white;
         }
     </style>
-    <title>Flask Image App</title>
 </head>
 <body>
     <div id="header">
         <h1>Valorant Positioner</h1>
     </div>
     <div id="tabs">
-        <a href="{{url_for('ascent')}}">Ascent</a>
-        <a href="{{url_for('split')}}">Split</a>
-        <a href="{{url_for('fracture')}}">Fracture</a>
-        <a href="{{url_for('bind')}}">Bind</a>
-        <a href="{{url_for('breeze')}}">Breeze</a>
-        <!-- <a href="{{url_for('lotus')}}">Lotus</a>
-        <a href="{{url_for('pearl')}}">Pearl</a> -->
-        <a href="{{url_for('icebox')}}">Icebox</a>
-        <a href="{{url_for('haven')}}">Haven</a>
+        <a href="ascent.html">Ascent</a>
+        <a href="split.html">Split</a>
+        <a href="fracture.html">Fracture</a>
+        <a href="bind.html">Bind</a>
+        <a href="{{ url_for('breeze') }}">Breeze</a>
+        <!-- <a href="lotus.html">Lotus</a>
+        <a href="pearl.html">Pearl</a> -->
+        <a href="icebox.html">Icebox</a>
+        <a href="haven.html">Haven</a>
     </div>
+
 </body>
 </html>
 <!-- COMMENTED OUT PEARL AND LOTUS BECAUSE THIS IS AN OLD DATA SET AND THERE IS NO 
