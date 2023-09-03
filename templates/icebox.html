@@ -10,6 +10,9 @@
             font-family: 'Courier New', monospace;
             font-weight: bold;
         }
+        #header {
+            position: relative;
+        }
         #mapContainer {
             position: relative;
         }
@@ -23,73 +26,154 @@
             background-color: red;
             border-radius: 50%;
         }
-        #header {
-            background-image: url("{{ url_for('static', filename='map_images/icebox_splash.png') }}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center top 33%;
-            text-align: center;
-            padding: 60px;
+        #header img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
         }
         #header h1{
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             color: white;
             font-weight: bolder;
             background-color: rgba(33, 33, 33, 0.5);
             padding: 10px 20px;
             border-radius: 5px;
-            display: inline-block;
-            position: relative;
-            top: 30px
         }
+        .dropdown-container {
+            position: absolute;
+            right: 500px;
+            top: 300px;
+        }
+
+        /* Additional styles for the dropdown container */
+        .dropdown-container {
+            background-color: rgba(33, 33, 33, 0.5); 
+            border: 1px solid #ccc; 
+            padding: 10px; 
+            border-radius: 5px; 
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+        .dropdown-container label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+        .dropdown-container select.dropdown {
+            width: 220px;
+            background-color: #f9f9f9; 
+            border: 1px solid #ccc; 
+            border-radius: 3px; 
+            font-size: 16px; 
+            padding: 5px; 
+        }
+        #homeButton {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: white;
+            font-weight: bolder;
+            background-color: rgba(33, 33, 33, 0.5);
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+        #homeButton a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            margin: 0 10px;
+        }
+
     </style>
 </head>
 <body>
     <div id="header">
+        <img src="{{ url_for('static', filename='map_images/icebox_splash.png') }}" alt="Header Image">
         <h1>ICEBOX</h1>
+        <!-- Add home button to return to the main page -->
+        <div id="homeButton">
+            <a href="{{ url_for('home') }}">Home</a>
+        </div>
+    </div>
+    <!-- Add the dropdown box -->
+    <div class="dropdown-container">
+        <label for="tierDropdown">Select Competitive Tier</label>
+        <select id="tierDropdown" class="dropdown">
+            <option value="UNRANKED" selected>ALL TIERS</option>
+            <option value="IRON">IRON</option>
+            <option value="BRONZE">BRONZE</option>
+            <option value="SILVER">SILVER</option>
+            <option value="GOLD">GOLD</option>
+            <option value="PLATINUM">PLATINUM</option>
+            <option value="DIAMOND">DIAMOND</option>
+            <option value="IMMORTAL">IMMORTAL</option>
+            <option value="RADIANT">RADIANT</option>
+        </select>
     </div>
     <div id="mapContainer">
-        <div id="mapContainer">
-            <img id="mapImage" src="{{ url_for('static', filename='map_images/icebox_image.png') }}" alt="Image">
-            {% for coordinate in mini_map_coordinates %}
-                <div class="coordinateMarker"></div>
-            {% endfor %}
-        </div>
+        <img id="mapImage" src="{{ url_for('static', filename='map_images/icebox_image.png') }}" alt="Image">
+        {% for coordinate in mini_map_coordinates %}
+            <div class="coordinateMarker"></div>
+        {% endfor %}
     </div>
 </body>
 <script>
-    // Get the map image element
-    var mapImage = document.getElementById('mapImage');
-
     // Function to set the position of a coordinate marker
     function setPosition(marker, x, y) {
-        //console.log("Setting position for marker:", marker, "x:", x, "y:", y);
         marker.style.left = x + 'px';
         marker.style.top = y + 'px';
     }
 
-    // Wait for the map image to load
-    mapImage.onload = function() {
-        // Get the map image dimensions
-        var mapWidth = mapImage.width;
-        var mapHeight = mapImage.height;
+    // Wait for the DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the map image element
+        var mapImage = document.getElementById('mapImage');
+        var tierDropdown = document.getElementById('tierDropdown');
 
-        // Define the variables
-        var x_Multiplier = {{ x_Multiplier }};
-        var y_Multiplier = {{ y_Multiplier }};
-        var x_ScalarToAdd = {{ x_ScalarToAdd }};
-        var y_ScalarToAdd = {{ y_ScalarToAdd }};
-
-        // Loop through each coordinate marker and set its position
+        // Define an array to store all markers
         var markers = document.querySelectorAll('.coordinateMarker');
-        markers.forEach(function(marker, index) {
-            //console.log("Loop iteration:", index)
-            var mini_map_coordinates = {{mini_map_coordinates | tojson}};
-            var coordinate = mini_map_coordinates[index];
-            var mini_x = coordinate.x * mapWidth;
-            var mini_y = coordinate.y * mapHeight;
-            setPosition(marker, mini_x, mini_y);
-            //console.log("Setting position for marker:", marker, "x:", mini_x, "y:", mini_y);
-        });
-    };
+
+        // Function to update markers based on the selected tier
+        function updateMarkers() {
+            var selectedTier = tierDropdown.value;
+
+            var mini_map_coordinates = {{ mini_map_coordinates | tojson }};
+            console.log(mini_map_coordinates);
+
+            markers.forEach(function(marker, index) {
+                // Get the player's tier from the coordinate object
+                var playerTier = mini_map_coordinates[index].player_tier;
+
+                // Scale the coordinates based on image width and height
+                var mini_x = mini_map_coordinates[index].x * mapImage.width;
+                var mini_y = mini_map_coordinates[index].y * mapImage.height;
+
+                // Set the position of the marker
+                setPosition(marker, mini_x, mini_y);
+
+                // Hide or show markers based on the selected tier
+                if (selectedTier === "UNRANKED" || playerTier.startsWith(selectedTier)) {
+                    marker.style.display = 'block';
+                } else {
+                    marker.style.display = 'none';
+                }
+            });
+        }
+
+        // Wait for the map image to load
+        mapImage.onload = function() {
+            // Add an event listener to the tier dropdown
+            tierDropdown.addEventListener('change', updateMarkers);
+
+            // Call updateMarkers initially to show all markers
+            updateMarkers();
+        };
+    });
 </script>
 </html>
+

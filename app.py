@@ -81,9 +81,11 @@ def ascent():
                             x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
                             y_ScalarToAdd=y_ScalarToAdd)
 
-# ----------------------- SPLIT -----------------------
+# ----------------------- split -----------------------
 @app.route("/split")
 def split():
+    selected_tier = request.args.get('tier')  # Get the selected tier from request args
+
     with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
@@ -91,24 +93,6 @@ def split():
 
     mapURL = '/Game/Maps/Bonsai/Bonsai'
     death_coordinates = []
-    round_results = []
-
-    matches = match_data['matches']
-    # Iterate through rounds and their results
-    for match in matches:
-        if match['matchInfo']['mapId'] == mapURL:
-            round_results = match['roundResults']
-
-        # Iterate through player stats for each round
-        for round_result in round_results:
-            for player_stat in round_result['playerStats']:
-                kills = player_stat['kills']
-
-                # Iterate through kills for each player
-                for kill in kills:
-                    if 'victimLocation' in kill:
-                        victim_location = kill['victimLocation']
-                        death_coordinates.append(victim_location)
 
     map_data = maps['data'][1]
     x_Multiplier = map_data['xMultiplier']
@@ -116,46 +100,67 @@ def split():
     x_ScalarToAdd = map_data['xScalarToAdd']
     y_ScalarToAdd = map_data['yScalarToAdd']
 
-    mini_map_coordinates = []
-    for death in death_coordinates:
-        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
-        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
-
-    image_path  = "valorant-app/static/map_images/split_image.png"
-    return render_template('split.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
-
-#######################################################################
-#################### FRACTURE #########################################
-@app.route("/fracture")
-def fracture():
-    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        maps = json.load(json_file)
-    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
-        match_data = json.load(map_file)
-
-    mapURL = "/Game/Maps/Canyon/Canyon"
-    death_coordinates = []
-    round_results = []
-
     matches = match_data['matches']
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-        # Iterate through player stats for each round
-        for round_result in round_results:
-            for player_stat in round_result['playerStats']:
-                kills = player_stat['kills']
+            # Create a dictionary to map player puuids to competitive tiers
+            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
 
-                # Iterate through kills for each player
-                for kill in kills:
-                    if 'victimLocation' in kill:
-                        victim_location = kill['victimLocation']
-                        death_coordinates.append(victim_location)
+            # Iterate through player stats for each round
+            for round_result in round_results:
+                for player_stat in round_result['playerStats']:
+                    kills = player_stat['kills']
+
+                    # Iterate through kills for each player
+                    for kill in kills:
+                        if 'victimLocation' in kill:
+                            victim_location = kill['victimLocation']
+
+                            # Check if the competitive tier matches the selected tier
+                            player_puuid = player_stat['puuid']
+                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
+                        
+                            # Filter by competitive tier and set mini_x and mini_y
+                            if selected_tier is None or player_tier == selected_tier:
+                                death_coordinates.append({
+                                    'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
+                                    'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
+                                    'player_puuid': player_puuid,
+                                    'player_tier': player_tier
+                                })
+
+    mini_map_coordinates = []
+    for death in death_coordinates:
+        mini_x = death['x']
+        mini_y = death['y']
+        mini_map_coordinates.append({
+            'x': mini_x,
+            'y': mini_y,
+            'player_puuid': death['player_puuid'],
+            'player_tier': death['player_tier']
+        })
+
+    image_path = "valorant-app/static/map_images/split_image.png"
+
+    return render_template('split.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
+                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
+                            y_ScalarToAdd=y_ScalarToAdd)
+
+# ----------------------- fracture -----------------------
+@app.route("/fracture")
+def fracture():
+    selected_tier = request.args.get('tier')  # Get the selected tier from request args
+
+    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
+        maps = json.load(json_file)
+    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+        match_data = json.load(map_file)
+
+    mapURL = '/Game/Maps/Canyon/Canyon'
+    death_coordinates = []
 
     map_data = maps['data'][2]
     x_Multiplier = map_data['xMultiplier']
@@ -163,47 +168,67 @@ def fracture():
     x_ScalarToAdd = map_data['xScalarToAdd']
     y_ScalarToAdd = map_data['yScalarToAdd']
 
-    mini_map_coordinates = []
-    for death in death_coordinates:
-        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
-        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
-
-    image_path  = "valorant-app/static/map_images/fracture_image.png"
-    return render_template('fracture.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
-
-#######################################################################
-#################### BIND #############################################
-
-@app.route("/bind")
-def bind():
-    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        maps = json.load(json_file)
-    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
-        match_data = json.load(map_file)
-
-    mapURL = "/Game/Maps/Duality/Duality"
-    death_coordinates = []
-    round_results = []
-
     matches = match_data['matches']
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-        # Iterate through player stats for each round
-        for round_result in round_results:
-            for player_stat in round_result['playerStats']:
-                kills = player_stat['kills']
+            # Create a dictionary to map player puuids to competitive tiers
+            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
 
-                # Iterate through kills for each player
-                for kill in kills:
-                    if 'victimLocation' in kill:
-                        victim_location = kill['victimLocation']
-                        death_coordinates.append(victim_location)
+            # Iterate through player stats for each round
+            for round_result in round_results:
+                for player_stat in round_result['playerStats']:
+                    kills = player_stat['kills']
+
+                    # Iterate through kills for each player
+                    for kill in kills:
+                        if 'victimLocation' in kill:
+                            victim_location = kill['victimLocation']
+
+                            # Check if the competitive tier matches the selected tier
+                            player_puuid = player_stat['puuid']
+                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
+                        
+                            # Filter by competitive tier and set mini_x and mini_y
+                            if selected_tier is None or player_tier == selected_tier:
+                                death_coordinates.append({
+                                    'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
+                                    'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
+                                    'player_puuid': player_puuid,
+                                    'player_tier': player_tier
+                                })
+
+    mini_map_coordinates = []
+    for death in death_coordinates:
+        mini_x = death['x']
+        mini_y = death['y']
+        mini_map_coordinates.append({
+            'x': mini_x,
+            'y': mini_y,
+            'player_puuid': death['player_puuid'],
+            'player_tier': death['player_tier']
+        })
+
+    image_path = "valorant-app/static/map_images/fracture_image.png"
+
+    return render_template('fracture.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
+                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
+                            y_ScalarToAdd=y_ScalarToAdd)
+
+# ----------------------- bind -----------------------
+@app.route("/bind")
+def bind():
+    selected_tier = request.args.get('tier')  # Get the selected tier from request args
+
+    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
+        maps = json.load(json_file)
+    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+        match_data = json.load(map_file)
+
+    mapURL = '/Game/Maps/Duality/Duality'
+    death_coordinates = []
 
     map_data = maps['data'][3]
     x_Multiplier = map_data['xMultiplier']
@@ -211,47 +236,67 @@ def bind():
     x_ScalarToAdd = map_data['xScalarToAdd']
     y_ScalarToAdd = map_data['yScalarToAdd']
 
-    mini_map_coordinates = []
-    for death in death_coordinates:
-        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
-        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
-
-    image_path  = "valorant-app/static/map_images/bind_image.png"
-    return render_template('bind.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
-
-#######################################################################
-#################### BREEZE ###########################################
-
-@app.route("/breeze")
-def breeze():
-    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        maps = json.load(json_file)
-    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
-        match_data = json.load(map_file)
-
-    mapURL = "/Game/Maps/Foxtrot/Foxtrot"
-    death_coordinates = []
-    round_results = []
-
     matches = match_data['matches']
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-        # Iterate through player stats for each round
-        for round_result in round_results:
-            for player_stat in round_result['playerStats']:
-                kills = player_stat['kills']
+            # Create a dictionary to map player puuids to competitive tiers
+            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
 
-                # Iterate through kills for each player
-                for kill in kills:
-                    if 'victimLocation' in kill:
-                        victim_location = kill['victimLocation']
-                        death_coordinates.append(victim_location)
+            # Iterate through player stats for each round
+            for round_result in round_results:
+                for player_stat in round_result['playerStats']:
+                    kills = player_stat['kills']
+
+                    # Iterate through kills for each player
+                    for kill in kills:
+                        if 'victimLocation' in kill:
+                            victim_location = kill['victimLocation']
+
+                            # Check if the competitive tier matches the selected tier
+                            player_puuid = player_stat['puuid']
+                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
+                        
+                            # Filter by competitive tier and set mini_x and mini_y
+                            if selected_tier is None or player_tier == selected_tier:
+                                death_coordinates.append({
+                                    'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
+                                    'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
+                                    'player_puuid': player_puuid,
+                                    'player_tier': player_tier
+                                })
+
+    mini_map_coordinates = []
+    for death in death_coordinates:
+        mini_x = death['x']
+        mini_y = death['y']
+        mini_map_coordinates.append({
+            'x': mini_x,
+            'y': mini_y,
+            'player_puuid': death['player_puuid'],
+            'player_tier': death['player_tier']
+        })
+
+    image_path = "valorant-app/static/map_images/bind_image.png"
+
+    return render_template('bind.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
+                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
+                            y_ScalarToAdd=y_ScalarToAdd)
+
+# ----------------------- breeze -----------------------
+@app.route("/breeze")
+def breeze():
+    selected_tier = request.args.get('tier')  # Get the selected tier from request args
+
+    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
+        maps = json.load(json_file)
+    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+        match_data = json.load(map_file)
+
+    mapURL = '/Game/Maps/Foxtrot/Foxtrot'
+    death_coordinates = []
 
     map_data = maps['data'][4]
     x_Multiplier = map_data['xMultiplier']
@@ -259,48 +304,68 @@ def breeze():
     x_ScalarToAdd = map_data['xScalarToAdd']
     y_ScalarToAdd = map_data['yScalarToAdd']
 
-    mini_map_coordinates = []
-    for death in death_coordinates:
-        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
-        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
-
-    image_path  = "valorant-app/static/map_images/breeze_image.png"
-    return render_template('breeze.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
-
-
-#######################################################################
-#################### LOTUS ############################################
-
-@app.route("/lotus")
-def lotus():
-    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        maps = json.load(json_file)
-    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
-        match_data = json.load(map_file)
-
-    mapURL = "/Game/Maps/Jam/Jam"
-    death_coordinates = []
-    round_results = []
-
     matches = match_data['matches']
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-        # Iterate through player stats for each round
-        for round_result in round_results:
-            for player_stat in round_result['playerStats']:
-                kills = player_stat['kills']
+            # Create a dictionary to map player puuids to competitive tiers
+            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
 
-                # Iterate through kills for each player
-                for kill in kills:
-                    if 'victimLocation' in kill:
-                        victim_location = kill['victimLocation']
-                        death_coordinates.append(victim_location)
+            # Iterate through player stats for each round
+            for round_result in round_results:
+                for player_stat in round_result['playerStats']:
+                    kills = player_stat['kills']
+
+                    # Iterate through kills for each player
+                    for kill in kills:
+                        if 'victimLocation' in kill:
+                            victim_location = kill['victimLocation']
+
+                            # Check if the competitive tier matches the selected tier
+                            player_puuid = player_stat['puuid']
+                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
+                        
+                            # Filter by competitive tier and set mini_x and mini_y
+                            if selected_tier is None or player_tier == selected_tier:
+                                death_coordinates.append({
+                                    'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
+                                    'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
+                                    'player_puuid': player_puuid,
+                                    'player_tier': player_tier
+                                })
+
+    mini_map_coordinates = []
+    for death in death_coordinates:
+        mini_x = death['x']
+        mini_y = death['y']
+        mini_map_coordinates.append({
+            'x': mini_x,
+            'y': mini_y,
+            'player_puuid': death['player_puuid'],
+            'player_tier': death['player_tier']
+        })
+
+    image_path = "valorant-app/static/map_images/breeze_image.png"
+
+    return render_template('breeze.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
+                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
+                            y_ScalarToAdd=y_ScalarToAdd)
+
+
+# ----------------------- lotus -----------------------
+@app.route("/lotus")
+def lotus():
+    selected_tier = request.args.get('tier')  # Get the selected tier from request args
+
+    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
+        maps = json.load(json_file)
+    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+        match_data = json.load(map_file)
+
+    mapURL = '/Game/Maps/Jam/Jam'
+    death_coordinates = []
 
     map_data = maps['data'][8]
     x_Multiplier = map_data['xMultiplier']
@@ -308,47 +373,67 @@ def lotus():
     x_ScalarToAdd = map_data['xScalarToAdd']
     y_ScalarToAdd = map_data['yScalarToAdd']
 
-    mini_map_coordinates = []
-    for death in death_coordinates:
-        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
-        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
-
-    image_path  = "valorant-app/static/map_images/lotus_image.png"
-    return render_template('lotus.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
-
-#######################################################################
-#################### PEARL ############################################
-
-@app.route("/pearl")
-def pearl():
-    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        maps = json.load(json_file)
-    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
-        match_data = json.load(map_file)
-
-    mapURL = "/Game/Maps/Pitt/Pitt"
-    death_coordinates = []
-    round_results = []
-
     matches = match_data['matches']
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-        # Iterate through player stats for each round
-        for round_result in round_results:
-            for player_stat in round_result['playerStats']:
-                kills = player_stat['kills']
+            # Create a dictionary to map player puuids to competitive tiers
+            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
 
-                # Iterate through kills for each player
-                for kill in kills:
-                    if 'victimLocation' in kill:
-                        victim_location = kill['victimLocation']
-                        death_coordinates.append(victim_location)
+            # Iterate through player stats for each round
+            for round_result in round_results:
+                for player_stat in round_result['playerStats']:
+                    kills = player_stat['kills']
+
+                    # Iterate through kills for each player
+                    for kill in kills:
+                        if 'victimLocation' in kill:
+                            victim_location = kill['victimLocation']
+
+                            # Check if the competitive tier matches the selected tier
+                            player_puuid = player_stat['puuid']
+                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
+                        
+                            # Filter by competitive tier and set mini_x and mini_y
+                            if selected_tier is None or player_tier == selected_tier:
+                                death_coordinates.append({
+                                    'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
+                                    'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
+                                    'player_puuid': player_puuid,
+                                    'player_tier': player_tier
+                                })
+
+    mini_map_coordinates = []
+    for death in death_coordinates:
+        mini_x = death['x']
+        mini_y = death['y']
+        mini_map_coordinates.append({
+            'x': mini_x,
+            'y': mini_y,
+            'player_puuid': death['player_puuid'],
+            'player_tier': death['player_tier']
+        })
+
+    image_path = "valorant-app/static/map_images/lotus_image.png"
+
+    return render_template('lotus.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
+                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
+                            y_ScalarToAdd=y_ScalarToAdd)
+
+# ----------------------- pearl -----------------------
+@app.route("/pearl")
+def pearl():
+    selected_tier = request.args.get('tier')  # Get the selected tier from request args
+
+    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
+        maps = json.load(json_file)
+    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+        match_data = json.load(map_file)
+
+    mapURL = '/Game/Maps/Pitt/Pitt'
+    death_coordinates = []
 
     map_data = maps['data'][9]
     x_Multiplier = map_data['xMultiplier']
@@ -356,47 +441,67 @@ def pearl():
     x_ScalarToAdd = map_data['xScalarToAdd']
     y_ScalarToAdd = map_data['yScalarToAdd']
 
-    mini_map_coordinates = []
-    for death in death_coordinates:
-        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
-        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
-
-    image_path  = "valorant-app/static/map_images/pearl_image.png"
-    return render_template('pearl.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
-
-#######################################################################
-#################### ICEBOX ###########################################
-
-@app.route("/icebox")
-def icebox():
-    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        maps = json.load(json_file)
-    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
-        match_data = json.load(map_file)
-
-    mapURL = "/Game/Maps/Port/Port"
-    death_coordinates = []
-    round_results = []
-
     matches = match_data['matches']
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-        # Iterate through player stats for each round
-        for round_result in round_results:
-            for player_stat in round_result['playerStats']:
-                kills = player_stat['kills']
+            # Create a dictionary to map player puuids to competitive tiers
+            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
 
-                # Iterate through kills for each player
-                for kill in kills:
-                    if 'victimLocation' in kill:
-                        victim_location = kill['victimLocation']
-                        death_coordinates.append(victim_location)
+            # Iterate through player stats for each round
+            for round_result in round_results:
+                for player_stat in round_result['playerStats']:
+                    kills = player_stat['kills']
+
+                    # Iterate through kills for each player
+                    for kill in kills:
+                        if 'victimLocation' in kill:
+                            victim_location = kill['victimLocation']
+
+                            # Check if the competitive tier matches the selected tier
+                            player_puuid = player_stat['puuid']
+                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
+                        
+                            # Filter by competitive tier and set mini_x and mini_y
+                            if selected_tier is None or player_tier == selected_tier:
+                                death_coordinates.append({
+                                    'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
+                                    'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
+                                    'player_puuid': player_puuid,
+                                    'player_tier': player_tier
+                                })
+
+    mini_map_coordinates = []
+    for death in death_coordinates:
+        mini_x = death['x']
+        mini_y = death['y']
+        mini_map_coordinates.append({
+            'x': mini_x,
+            'y': mini_y,
+            'player_puuid': death['player_puuid'],
+            'player_tier': death['player_tier']
+        })
+
+    image_path = "valorant-app/static/map_images/pearl_image.png"
+
+    return render_template('pearl.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
+                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
+                            y_ScalarToAdd=y_ScalarToAdd)
+
+# ----------------------- icebox -----------------------
+@app.route("/icebox")
+def icebox():
+    selected_tier = request.args.get('tier')  # Get the selected tier from request args
+
+    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
+        maps = json.load(json_file)
+    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+        match_data = json.load(map_file)
+
+    mapURL = '/Game/Maps/Port/Port'
+    death_coordinates = []
 
     map_data = maps['data'][10]
     x_Multiplier = map_data['xMultiplier']
@@ -404,47 +509,67 @@ def icebox():
     x_ScalarToAdd = map_data['xScalarToAdd']
     y_ScalarToAdd = map_data['yScalarToAdd']
 
-    mini_map_coordinates = []
-    for death in death_coordinates:
-        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
-        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
-
-    image_path  = "valorant-app/static/map_images/icebox_image.png"
-    return render_template('icebox.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
-
-#######################################################################
-#################### HAVEN ############################################
-
-@app.route("/haven")
-def haven():
-    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
-        maps = json.load(json_file)
-    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
-        match_data = json.load(map_file)
-
-    mapURL = "/Game/Maps/Triad/Triad"
-    death_coordinates = []
-    round_results = []
-
     matches = match_data['matches']
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-        # Iterate through player stats for each round
-        for round_result in round_results:
-            for player_stat in round_result['playerStats']:
-                kills = player_stat['kills']
+            # Create a dictionary to map player puuids to competitive tiers
+            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
 
-                # Iterate through kills for each player
-                for kill in kills:
-                    if 'victimLocation' in kill:
-                        victim_location = kill['victimLocation']
-                        death_coordinates.append(victim_location)
+            # Iterate through player stats for each round
+            for round_result in round_results:
+                for player_stat in round_result['playerStats']:
+                    kills = player_stat['kills']
+
+                    # Iterate through kills for each player
+                    for kill in kills:
+                        if 'victimLocation' in kill:
+                            victim_location = kill['victimLocation']
+
+                            # Check if the competitive tier matches the selected tier
+                            player_puuid = player_stat['puuid']
+                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
+                        
+                            # Filter by competitive tier and set mini_x and mini_y
+                            if selected_tier is None or player_tier == selected_tier:
+                                death_coordinates.append({
+                                    'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
+                                    'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
+                                    'player_puuid': player_puuid,
+                                    'player_tier': player_tier
+                                })
+
+    mini_map_coordinates = []
+    for death in death_coordinates:
+        mini_x = death['x']
+        mini_y = death['y']
+        mini_map_coordinates.append({
+            'x': mini_x,
+            'y': mini_y,
+            'player_puuid': death['player_puuid'],
+            'player_tier': death['player_tier']
+        })
+
+    image_path = "valorant-app/static/map_images/icebox_image.png"
+
+    return render_template('icebox.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
+                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
+                            y_ScalarToAdd=y_ScalarToAdd)
+
+# ----------------------- haven -----------------------
+@app.route("/haven")
+def haven():
+    selected_tier = request.args.get('tier')  # Get the selected tier from request args
+
+    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
+        maps = json.load(json_file)
+    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+        match_data = json.load(map_file)
+
+    mapURL = '/Game/Maps/Triad/Triad'
+    death_coordinates = []
 
     map_data = maps['data'][12]
     x_Multiplier = map_data['xMultiplier']
@@ -452,13 +577,51 @@ def haven():
     x_ScalarToAdd = map_data['xScalarToAdd']
     y_ScalarToAdd = map_data['yScalarToAdd']
 
+    matches = match_data['matches']
+    # Iterate through rounds and their results
+    for match in matches:
+        if match['matchInfo']['mapId'] == mapURL:
+            round_results = match['roundResults']
+
+            # Create a dictionary to map player puuids to competitive tiers
+            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+
+            # Iterate through player stats for each round
+            for round_result in round_results:
+                for player_stat in round_result['playerStats']:
+                    kills = player_stat['kills']
+
+                    # Iterate through kills for each player
+                    for kill in kills:
+                        if 'victimLocation' in kill:
+                            victim_location = kill['victimLocation']
+
+                            # Check if the competitive tier matches the selected tier
+                            player_puuid = player_stat['puuid']
+                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
+                        
+                            # Filter by competitive tier and set mini_x and mini_y
+                            if selected_tier is None or player_tier == selected_tier:
+                                death_coordinates.append({
+                                    'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
+                                    'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
+                                    'player_puuid': player_puuid,
+                                    'player_tier': player_tier
+                                })
+
     mini_map_coordinates = []
     for death in death_coordinates:
-        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
-        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
+        mini_x = death['x']
+        mini_y = death['y']
+        mini_map_coordinates.append({
+            'x': mini_x,
+            'y': mini_y,
+            'player_puuid': death['player_puuid'],
+            'player_tier': death['player_tier']
+        })
 
-    image_path  = "valorant-app/static/map_images/haven_image.png"
+    image_path = "valorant-app/static/map_images/haven_image.png"
+
     return render_template('haven.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
                             x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
                             y_ScalarToAdd=y_ScalarToAdd)

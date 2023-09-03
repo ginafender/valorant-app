@@ -10,6 +10,9 @@
             font-family: 'Courier New', monospace;
             font-weight: bold;
         }
+        #header {
+            position: relative;
+        }
         #mapContainer {
             position: relative;
         }
@@ -23,150 +26,154 @@
             background-color: red;
             border-radius: 50%;
         }
-        #header {
-            background-image: url("{{ url_for('static', filename='map_images/ascent_splash.png') }}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center top 33%;
-            text-align: center;
-            padding: 60px;
+        #header img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
         }
         #header h1{
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             color: white;
             font-weight: bolder;
             background-color: rgba(33, 33, 33, 0.5);
             padding: 10px 20px;
             border-radius: 5px;
-            display: inline-block;
-            position: relative;
-            top: 30px
         }
         .dropdown-container {
             position: absolute;
-            right: 20px;
-            top: 300px; /* Adjust the top value as needed */
+            right: 500px;
+            top: 300px;
         }
 
+        /* Additional styles for the dropdown container */
+        .dropdown-container {
+            background-color: rgba(33, 33, 33, 0.5); 
+            border: 1px solid #ccc; 
+            padding: 10px; 
+            border-radius: 5px; 
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
         .dropdown-container label {
             display: block;
+            font-size: 18px;
             font-weight: bold;
-            color: #474747;
-            margin-bottom: 5px; /* Add some spacing between the label and the dropdown */
+            color: white;
+            margin-bottom: 5px;
         }
-
-        /* Your existing dropdown styles */
-        .dropdown {
-            width: 150px;
-            display: inline-block;
-            background-color: #fff;
-            border-radius: 2px;
-            box-shadow: 0 0 2px rgb(204, 204, 204);
-            transition: all .5s ease;
-            font-size: 14px;
-            font-weight: bold;
-            color: #474747;
-            height: auto;
-            text-align: left;
+        .dropdown-container select.dropdown {
+            width: 220px;
+            background-color: #f9f9f9; 
+            border: 1px solid #ccc; 
+            border-radius: 3px; 
+            font-size: 16px; 
+            padding: 5px; 
+        }
+        #homeButton {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: white;
+            font-weight: bolder;
+            background-color: rgba(33, 33, 33, 0.5);
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+        #homeButton a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            margin: 0 10px;
         }
 
     </style>
 </head>
 <body>
     <div id="header">
+        <img src="{{ url_for('static', filename='map_images/ascent_splash.png') }}" alt="Header Image">
         <h1>ASCENT</h1>
+        <!-- Add home button to return to the main page -->
+        <div id="homeButton">
+            <a href="{{ url_for('home') }}">Home</a>
+        </div>
     </div>
     <!-- Add the dropdown box -->
     <div class="dropdown-container">
         <label for="tierDropdown">Select Competitive Tier</label>
-    <select id="tierDropdown" class="dropdown">
-        <option value="UNRANKED" selected>UNRANKED</option>
-        <option value="IRON">IRON</option>
-        <option value="BRONZE">BRONZE</option>
-        <option value="SILVER">SILVER</option>
-        <option value="GOLD">GOLD</option>
-        <option value="PLATINUM">PLATINUM</option>
-        <option value="DIAMOND">DIAMOND</option>
-        <option value="IMMORTAL">IMMORTAL</option>
-        <option value="RADIANT">RADIANT</option>
-    </select>
+        <select id="tierDropdown" class="dropdown">
+            <option value="UNRANKED" selected>ALL TIERS</option>
+            <option value="IRON">IRON</option>
+            <option value="BRONZE">BRONZE</option>
+            <option value="SILVER">SILVER</option>
+            <option value="GOLD">GOLD</option>
+            <option value="PLATINUM">PLATINUM</option>
+            <option value="DIAMOND">DIAMOND</option>
+            <option value="IMMORTAL">IMMORTAL</option>
+            <option value="RADIANT">RADIANT</option>
+        </select>
     </div>
     <div id="mapContainer">
-        <div id="mapContainer">
-            <img id="mapImage" src="{{ url_for('static', filename='map_images/ascent_image.png') }}" alt="Image">
-            {% for coordinate in mini_map_coordinates %}
-                <div class="coordinateMarker"></div>
-            {% endfor %}
-        </div>
+        <img id="mapImage" src="{{ url_for('static', filename='map_images/ascent_image.png') }}" alt="Image">
+        {% for coordinate in mini_map_coordinates %}
+            <div class="coordinateMarker"></div>
+        {% endfor %}
     </div>
 </body>
 <script>
-    // Get the map image element
-    var mapImage = document.getElementById('mapImage');
-    var tierDropdown = document.getElementById('tierDropdown');
-
     // Function to set the position of a coordinate marker
     function setPosition(marker, x, y) {
         marker.style.left = x + 'px';
         marker.style.top = y + 'px';
     }
 
-    // Function to update markers based on the selected tier
-    function updateMarkers() {
-        var selectedTier = tierDropdown.value;
+    // Wait for the DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the map image element
+        var mapImage = document.getElementById('mapImage');
+        var tierDropdown = document.getElementById('tierDropdown');
+
+        // Define an array to store all markers
         var markers = document.querySelectorAll('.coordinateMarker');
 
-        var mini_map_coordinates = {{ mini_map_coordinates | tojson }};
-        console.log(mini_map_coordinates);
+        // Function to update markers based on the selected tier
+        function updateMarkers() {
+            var selectedTier = tierDropdown.value;
 
-        markers.forEach(function(marker, index) {
-            // Get the player's tier from the coordinate object
-            var playerTier = mini_map_coordinates[index].player_tier;
+            var mini_map_coordinates = {{ mini_map_coordinates | tojson }};
+            console.log(mini_map_coordinates);
 
-            // Scale the coordinates based on image width and height
-            var mini_x = mini_map_coordinates[index].x * mapImage.width;
-            var mini_y = mini_map_coordinates[index].y * mapImage.height;
+            markers.forEach(function(marker, index) {
+                // Get the player's tier from the coordinate object
+                var playerTier = mini_map_coordinates[index].player_tier;
 
-            // Set the position of the marker
-            setPosition(marker, mini_x, mini_y);
+                // Scale the coordinates based on image width and height
+                var mini_x = mini_map_coordinates[index].x * mapImage.width;
+                var mini_y = mini_map_coordinates[index].y * mapImage.height;
 
-            // Hide or show markers based on the selected tier
-            if (selectedTier === "" || playerTier === selectedTier) {
-                marker.style.display = 'block';
-            } else {
-                marker.style.display = 'none';
-            }
-        });
-    }
+                // Set the position of the marker
+                setPosition(marker, mini_x, mini_y);
 
-    // Wait for the map image to load
-    mapImage.onload = function() {
-        // Add an event listener to the tier dropdown
-        tierDropdown.addEventListener('change', updateMarkers);
-
-        // Call updateMarkers initially to show all markers
-        updateMarkers();
-    };
-    var rankOptions = {
-        'IRON': ['IRON_1', 'IRON_2', 'IRON_3'],
-        'BRONZE': ['BRONZE_1', 'BRONZE_2', 'BRONZE_3'],
-        'SILVER': ['SILVER_1', 'SILVER_2', 'SILVER_3'],
-        'GOLD': ['GOLD_1', 'GOLD_2', 'GOLD_3'],
-        'PLATINUM': ['PLATINUM_1', 'PLATINUM_2', 'PLATINUM_3'],
-        'DIAMOND': ['DIAMOND_1', 'DIAMOND_2', 'DIAMOND_3'],
-        'IMMORTAL': ['IMMORTAL_1', 'IMMORTAL_2', 'IMMORTAL_3']
-    };
-
-    tierDropdown.addEventListener('change', function () {
-        var selectedRank = tierDropdown.value;
-        var options = tierDropdown.getElementsByTagName('option');
-        for (var i = 0; i < options.length; i++) {
-            var option = options[i];
-            if (rankOptions[selectedRank].includes(option.value)) {
-                option.style.display = 'block';
-            } else {
-                option.style.display = 'none';
-            }
+                // Hide or show markers based on the selected tier
+                if (selectedTier === "UNRANKED" || playerTier.startsWith(selectedTier)) {
+                    marker.style.display = 'block';
+                } else {
+                    marker.style.display = 'none';
+                }
+            });
         }
+
+        // Wait for the map image to load
+        mapImage.onload = function() {
+            // Add an event listener to the tier dropdown
+            tierDropdown.addEventListener('change', updateMarkers);
+
+            // Call updateMarkers initially to show all markers
+            updateMarkers();
+        };
     });
 </script>
 </html>
+
