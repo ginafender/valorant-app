@@ -41,6 +41,34 @@
             position: relative;
             top: 30px
         }
+        .dropdown-container {
+            position: absolute;
+            right: 20px;
+            top: 300px; /* Adjust the top value as needed */
+        }
+
+        .dropdown-container label {
+            display: block;
+            font-weight: bold;
+            color: #474747;
+            margin-bottom: 5px; /* Add some spacing between the label and the dropdown */
+        }
+
+        /* Your existing dropdown styles */
+        .dropdown {
+            width: 150px;
+            display: inline-block;
+            background-color: #fff;
+            border-radius: 2px;
+            box-shadow: 0 0 2px rgb(204, 204, 204);
+            transition: all .5s ease;
+            font-size: 14px;
+            font-weight: bold;
+            color: #474747;
+            height: auto;
+            text-align: left;
+        }
+
     </style>
 </head>
 <body>
@@ -48,31 +76,20 @@
         <h1>ASCENT</h1>
     </div>
     <!-- Add the dropdown box -->
-    <select id="tierDropdown">
+    <div class="dropdown-container">
+        <label for="tierDropdown">Select Competitive Tier</label>
+    <select id="tierDropdown" class="dropdown">
         <option value="UNRANKED" selected>UNRANKED</option>
-        <option value="IRON_1">IRON 1</option>
-        <option value="IRON_2">IRON 2</option>
-        <option value="IRON_3">IRON 3</option>
-        <option value="BRONZE_1">BRONZE 1</option>
-        <option value="BRONZE_2">BRONZE 2</option>
-        <option value="BRONZE_3">BRONZE 3</option>
-        <option value="SILVER_1">SILVER 1</option>
-        <option value="SILVER_2">SILVER 2</option>
-        <option value="SILVER_3">SILVER 3</option>
-        <option value="GOLD_1">GOLD 1</option>
-        <option value="GOLD_2">GOLD 2</option>
-        <option value="GOLD_3">GOLD 3</option>
-        <option value="PLATINUM_1">PLATINUM 1</option>
-        <option value="PLATINUM_2">PLATINUM 2</option>
-        <option value="PLATINUM_3">PLATINUM 3</option>
-        <option value="DIAMOND_1">DIAMOND 1</option>
-        <option value="DIAMOND_2">DIAMOND 2</option>
-        <option value="DIAMOND_3">DIAMOND 3</option>
-        <option value="IMMORTAL_1">IMMORTAL 1</option>
-        <option value="IMMORTAL_2">IMMORTAL 2</option>
-        <option value="IMMORTAL_3">IMMORTAL 3</option>
+        <option value="IRON">IRON</option>
+        <option value="BRONZE">BRONZE</option>
+        <option value="SILVER">SILVER</option>
+        <option value="GOLD">GOLD</option>
+        <option value="PLATINUM">PLATINUM</option>
+        <option value="DIAMOND">DIAMOND</option>
+        <option value="IMMORTAL">IMMORTAL</option>
         <option value="RADIANT">RADIANT</option>
     </select>
+    </div>
     <div id="mapContainer">
         <div id="mapContainer">
             <img id="mapImage" src="{{ url_for('static', filename='map_images/ascent_image.png') }}" alt="Image">
@@ -129,5 +146,27 @@
         // Call updateMarkers initially to show all markers
         updateMarkers();
     };
+    var rankOptions = {
+        'IRON': ['IRON_1', 'IRON_2', 'IRON_3'],
+        'BRONZE': ['BRONZE_1', 'BRONZE_2', 'BRONZE_3'],
+        'SILVER': ['SILVER_1', 'SILVER_2', 'SILVER_3'],
+        'GOLD': ['GOLD_1', 'GOLD_2', 'GOLD_3'],
+        'PLATINUM': ['PLATINUM_1', 'PLATINUM_2', 'PLATINUM_3'],
+        'DIAMOND': ['DIAMOND_1', 'DIAMOND_2', 'DIAMOND_3'],
+        'IMMORTAL': ['IMMORTAL_1', 'IMMORTAL_2', 'IMMORTAL_3']
+    };
+
+    tierDropdown.addEventListener('change', function () {
+        var selectedRank = tierDropdown.value;
+        var options = tierDropdown.getElementsByTagName('option');
+        for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            if (rankOptions[selectedRank].includes(option.value)) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
+        }
+    });
 </script>
 </html>
