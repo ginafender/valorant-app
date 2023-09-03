@@ -88,6 +88,36 @@
             padding: 8px 16px;
             margin: 0 10px;
         }
+        .character-dropdown {
+            position: absolute;
+            right: 500px;
+            top: 400px;
+        }
+
+        /* Additional styles for the dropdown container */
+        .character-dropdown {
+            background-color: rgba(33, 33, 33, 0.5); 
+            border: 1px solid #ccc; 
+            padding: 10px; 
+            border-radius: 5px; 
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+        .character-dropdown label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+        .character-dropdown select.dropdown {
+            width: 250px;
+            background-color: #f9f9f9; 
+            border: 1px solid #ccc; 
+            border-radius: 3px; 
+            font-size: 16px; 
+            padding: 5px; 
+        }
 
     </style>
 </head>
@@ -115,6 +145,15 @@
             <option value="RADIANT">RADIANT</option>
         </select>
     </div>
+    <div class="character-dropdown">
+        <label for="characterDropdown">Select Character</label>
+        <select id="characterDropdown" class="dropdown">
+            <option value="ALL" selected>ALL CHARACTERS</option>
+            {% for coordinate in unique_character_list %}
+                <option value="{{ coordinate.character_id }}">{{ coordinate.character_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
     <div id="mapContainer">
         <img id="mapImage" src="{{ url_for('static', filename='map_images/breeze_image.png') }}" alt="Image">
         {% for coordinate in mini_map_coordinates %}
@@ -134,20 +173,25 @@
         // Get the map image element
         var mapImage = document.getElementById('mapImage');
         var tierDropdown = document.getElementById('tierDropdown');
+        var characterDropdown = document.getElementById('characterDropdown');
 
         // Define an array to store all markers
         var markers = document.querySelectorAll('.coordinateMarker');
 
-        // Function to update markers based on the selected tier
+        // Function to update markers based on the selected tier and character
         function updateMarkers() {
             var selectedTier = tierDropdown.value;
+            var selectedCharacterName = characterDropdown.value;
+            console.log('selectedTier:', selectedTier);
+            console.log('selectedCharacterName:', selectedCharacterName);
 
             var mini_map_coordinates = {{ mini_map_coordinates | tojson }};
             console.log(mini_map_coordinates);
 
-            markers.forEach(function(marker, index) {
-                // Get the player's tier from the coordinate object
+            markers.forEach(function (marker, index) {
+                // Get the player's tier and character ID from the coordinate object
                 var playerTier = mini_map_coordinates[index].player_tier;
+                var characterId = mini_map_coordinates[index].character_id;
 
                 // Scale the coordinates based on image width and height
                 var mini_x = mini_map_coordinates[index].x * mapImage.width;
@@ -156,8 +200,12 @@
                 // Set the position of the marker
                 setPosition(marker, mini_x, mini_y);
 
-                // Hide or show markers based on the selected tier
-                if (selectedTier === "UNRANKED" || playerTier.startsWith(selectedTier)) {
+                // Determine if the marker should be displayed
+                var tierFilter = selectedTier === "UNRANKED" || playerTier.startsWith(selectedTier);
+                var characterFilter = selectedCharacterName === "ALL" || characterId === selectedCharacterName;
+
+                // Show the marker if either filter matches
+                if (tierFilter && characterFilter) {
                     marker.style.display = 'block';
                 } else {
                     marker.style.display = 'none';
@@ -165,10 +213,12 @@
             });
         }
 
+
         // Wait for the map image to load
         mapImage.onload = function() {
             // Add an event listener to the tier dropdown
             tierDropdown.addEventListener('change', updateMarkers);
+            characterDropdown.addEventListener('change', updateMarkers);
 
             // Call updateMarkers initially to show all markers
             updateMarkers();

@@ -22,6 +22,8 @@ def ascent():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
+    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+        character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Ascent/Ascent'
     death_coordinates = []
@@ -33,13 +35,25 @@ def ascent():
     y_ScalarToAdd = map_data['yScalarToAdd']
 
     matches = match_data['matches']
+
+    # Create a set to store unique character IDs
+    unique_character_ids = set()
+    unique_character_list = []
+
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-            # Create a dictionary to map player puuids to competitive tiers
-            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+            # Create a dictionary to map player puuids to competitive tiers, character IDs, and character names
+            player_data_dict = {
+                player['puuid']: {
+                    'competitiveTier': player['competitiveTier'],
+                    'characterId': player['characterId'],
+                    'characterName': character_mapping.get(player['characterId'], "Unknown Character")
+                }
+                for player in match['players']
+            }
 
             # Iterate through player stats for each round
             for round_result in round_results:
@@ -53,18 +67,33 @@ def ascent():
 
                             # Check if the competitive tier matches the selected tier
                             player_puuid = player_stat['puuid']
-                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
-                        
+                            player_tier = player_data_dict.get(player_puuid, {}).get('competitiveTier')
+                            character_id = player_data_dict.get(player_puuid, {}).get('characterId')
+                            character_name = player_data_dict.get(player_puuid, {}).get('characterName')
+
                             # Filter by competitive tier and set mini_x and mini_y
                             if selected_tier is None or player_tier == selected_tier:
                                 death_coordinates.append({
                                     'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
                                     'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
                                     'player_puuid': player_puuid,
-                                    'player_tier': player_tier
+                                    'player_tier': player_tier,
+                                    'character_id': character_id,
+                                    'character_name': character_name  # Include character name
                                 })
 
+                                # Add character IDs to the set for uniqueness
+                                unique_character_ids.add(character_id)
+
+    # Create a list of unique characters
+    for character_id in unique_character_ids:
+        unique_character_list.append({
+            'character_id': character_id,
+            'character_name': character_mapping.get(character_id, "Unknown Character")
+        })
+
     mini_map_coordinates = []
+
     for death in death_coordinates:
         mini_x = death['x']
         mini_y = death['y']
@@ -72,14 +101,17 @@ def ascent():
             'x': mini_x,
             'y': mini_y,
             'player_puuid': death['player_puuid'],
-            'player_tier': death['player_tier']
+            'player_tier': death['player_tier'],
+            'character_id': death['character_id'],  # Store the UUID here
         })
+
 
     image_path = "valorant-app/static/map_images/ascent_image.png"
 
-    return render_template('ascent.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
+    return render_template('ascent.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates, 
+                        unique_character_list=unique_character_list, x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, 
+                        x_ScalarToAdd=x_ScalarToAdd, y_ScalarToAdd=y_ScalarToAdd)
+
 
 # ----------------------- split -----------------------
 @app.route("/split")
@@ -90,6 +122,8 @@ def split():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
+    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+        character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Bonsai/Bonsai'
     death_coordinates = []
@@ -101,13 +135,25 @@ def split():
     y_ScalarToAdd = map_data['yScalarToAdd']
 
     matches = match_data['matches']
+
+    # Create a set to store unique character IDs
+    unique_character_ids = set()
+    unique_character_list = []
+
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-            # Create a dictionary to map player puuids to competitive tiers
-            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+            # Create a dictionary to map player puuids to competitive tiers, character IDs, and character names
+            player_data_dict = {
+                player['puuid']: {
+                    'competitiveTier': player['competitiveTier'],
+                    'characterId': player['characterId'],
+                    'characterName': character_mapping.get(player['characterId'], "Unknown Character")
+                }
+                for player in match['players']
+            }
 
             # Iterate through player stats for each round
             for round_result in round_results:
@@ -121,18 +167,33 @@ def split():
 
                             # Check if the competitive tier matches the selected tier
                             player_puuid = player_stat['puuid']
-                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
-                        
+                            player_tier = player_data_dict.get(player_puuid, {}).get('competitiveTier')
+                            character_id = player_data_dict.get(player_puuid, {}).get('characterId')
+                            character_name = player_data_dict.get(player_puuid, {}).get('characterName')
+
                             # Filter by competitive tier and set mini_x and mini_y
                             if selected_tier is None or player_tier == selected_tier:
                                 death_coordinates.append({
                                     'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
                                     'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
                                     'player_puuid': player_puuid,
-                                    'player_tier': player_tier
+                                    'player_tier': player_tier,
+                                    'character_id': character_id,
+                                    'character_name': character_name  # Include character name
                                 })
 
+                                # Add character IDs to the set for uniqueness
+                                unique_character_ids.add(character_id)
+
+    # Create a list of unique characters
+    for character_id in unique_character_ids:
+        unique_character_list.append({
+            'character_id': character_id,
+            'character_name': character_mapping.get(character_id, "Unknown Character")
+        })
+
     mini_map_coordinates = []
+
     for death in death_coordinates:
         mini_x = death['x']
         mini_y = death['y']
@@ -140,14 +201,16 @@ def split():
             'x': mini_x,
             'y': mini_y,
             'player_puuid': death['player_puuid'],
-            'player_tier': death['player_tier']
+            'player_tier': death['player_tier'],
+            'character_id': death['character_id'],  # Store the UUID here
         })
+
 
     image_path = "valorant-app/static/map_images/split_image.png"
 
-    return render_template('split.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
+    return render_template('split.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates, 
+                        unique_character_list=unique_character_list, x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, 
+                        x_ScalarToAdd=x_ScalarToAdd, y_ScalarToAdd=y_ScalarToAdd)
 
 # ----------------------- fracture -----------------------
 @app.route("/fracture")
@@ -158,6 +221,8 @@ def fracture():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
+    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+        character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Canyon/Canyon'
     death_coordinates = []
@@ -169,13 +234,25 @@ def fracture():
     y_ScalarToAdd = map_data['yScalarToAdd']
 
     matches = match_data['matches']
+
+    # Create a set to store unique character IDs
+    unique_character_ids = set()
+    unique_character_list = []
+
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-            # Create a dictionary to map player puuids to competitive tiers
-            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+            # Create a dictionary to map player puuids to competitive tiers, character IDs, and character names
+            player_data_dict = {
+                player['puuid']: {
+                    'competitiveTier': player['competitiveTier'],
+                    'characterId': player['characterId'],
+                    'characterName': character_mapping.get(player['characterId'], "Unknown Character")
+                }
+                for player in match['players']
+            }
 
             # Iterate through player stats for each round
             for round_result in round_results:
@@ -189,18 +266,33 @@ def fracture():
 
                             # Check if the competitive tier matches the selected tier
                             player_puuid = player_stat['puuid']
-                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
-                        
+                            player_tier = player_data_dict.get(player_puuid, {}).get('competitiveTier')
+                            character_id = player_data_dict.get(player_puuid, {}).get('characterId')
+                            character_name = player_data_dict.get(player_puuid, {}).get('characterName')
+
                             # Filter by competitive tier and set mini_x and mini_y
                             if selected_tier is None or player_tier == selected_tier:
                                 death_coordinates.append({
                                     'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
                                     'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
                                     'player_puuid': player_puuid,
-                                    'player_tier': player_tier
+                                    'player_tier': player_tier,
+                                    'character_id': character_id,
+                                    'character_name': character_name  # Include character name
                                 })
 
+                                # Add character IDs to the set for uniqueness
+                                unique_character_ids.add(character_id)
+
+    # Create a list of unique characters
+    for character_id in unique_character_ids:
+        unique_character_list.append({
+            'character_id': character_id,
+            'character_name': character_mapping.get(character_id, "Unknown Character")
+        })
+
     mini_map_coordinates = []
+
     for death in death_coordinates:
         mini_x = death['x']
         mini_y = death['y']
@@ -208,14 +300,16 @@ def fracture():
             'x': mini_x,
             'y': mini_y,
             'player_puuid': death['player_puuid'],
-            'player_tier': death['player_tier']
+            'player_tier': death['player_tier'],
+            'character_id': death['character_id'],  # Store the UUID here
         })
+
 
     image_path = "valorant-app/static/map_images/fracture_image.png"
 
-    return render_template('fracture.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
+    return render_template('fracture.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates, 
+                        unique_character_list=unique_character_list, x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, 
+                        x_ScalarToAdd=x_ScalarToAdd, y_ScalarToAdd=y_ScalarToAdd)
 
 # ----------------------- bind -----------------------
 @app.route("/bind")
@@ -226,6 +320,8 @@ def bind():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
+    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+        character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Duality/Duality'
     death_coordinates = []
@@ -237,13 +333,25 @@ def bind():
     y_ScalarToAdd = map_data['yScalarToAdd']
 
     matches = match_data['matches']
+
+    # Create a set to store unique character IDs
+    unique_character_ids = set()
+    unique_character_list = []
+
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-            # Create a dictionary to map player puuids to competitive tiers
-            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+            # Create a dictionary to map player puuids to competitive tiers, character IDs, and character names
+            player_data_dict = {
+                player['puuid']: {
+                    'competitiveTier': player['competitiveTier'],
+                    'characterId': player['characterId'],
+                    'characterName': character_mapping.get(player['characterId'], "Unknown Character")
+                }
+                for player in match['players']
+            }
 
             # Iterate through player stats for each round
             for round_result in round_results:
@@ -257,18 +365,33 @@ def bind():
 
                             # Check if the competitive tier matches the selected tier
                             player_puuid = player_stat['puuid']
-                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
-                        
+                            player_tier = player_data_dict.get(player_puuid, {}).get('competitiveTier')
+                            character_id = player_data_dict.get(player_puuid, {}).get('characterId')
+                            character_name = player_data_dict.get(player_puuid, {}).get('characterName')
+
                             # Filter by competitive tier and set mini_x and mini_y
                             if selected_tier is None or player_tier == selected_tier:
                                 death_coordinates.append({
                                     'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
                                     'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
                                     'player_puuid': player_puuid,
-                                    'player_tier': player_tier
+                                    'player_tier': player_tier,
+                                    'character_id': character_id,
+                                    'character_name': character_name  # Include character name
                                 })
 
+                                # Add character IDs to the set for uniqueness
+                                unique_character_ids.add(character_id)
+
+    # Create a list of unique characters
+    for character_id in unique_character_ids:
+        unique_character_list.append({
+            'character_id': character_id,
+            'character_name': character_mapping.get(character_id, "Unknown Character")
+        })
+
     mini_map_coordinates = []
+
     for death in death_coordinates:
         mini_x = death['x']
         mini_y = death['y']
@@ -276,14 +399,17 @@ def bind():
             'x': mini_x,
             'y': mini_y,
             'player_puuid': death['player_puuid'],
-            'player_tier': death['player_tier']
+            'player_tier': death['player_tier'],
+            'character_id': death['character_id'],  # Store the UUID here
         })
+
 
     image_path = "valorant-app/static/map_images/bind_image.png"
 
-    return render_template('bind.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
+    return render_template('bind.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates, 
+                        unique_character_list=unique_character_list, x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, 
+                        x_ScalarToAdd=x_ScalarToAdd, y_ScalarToAdd=y_ScalarToAdd)
+
 
 # ----------------------- breeze -----------------------
 @app.route("/breeze")
@@ -294,6 +420,8 @@ def breeze():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
+    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+        character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Foxtrot/Foxtrot'
     death_coordinates = []
@@ -305,13 +433,25 @@ def breeze():
     y_ScalarToAdd = map_data['yScalarToAdd']
 
     matches = match_data['matches']
+
+    # Create a set to store unique character IDs
+    unique_character_ids = set()
+    unique_character_list = []
+
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-            # Create a dictionary to map player puuids to competitive tiers
-            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+            # Create a dictionary to map player puuids to competitive tiers, character IDs, and character names
+            player_data_dict = {
+                player['puuid']: {
+                    'competitiveTier': player['competitiveTier'],
+                    'characterId': player['characterId'],
+                    'characterName': character_mapping.get(player['characterId'], "Unknown Character")
+                }
+                for player in match['players']
+            }
 
             # Iterate through player stats for each round
             for round_result in round_results:
@@ -325,18 +465,33 @@ def breeze():
 
                             # Check if the competitive tier matches the selected tier
                             player_puuid = player_stat['puuid']
-                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
-                        
+                            player_tier = player_data_dict.get(player_puuid, {}).get('competitiveTier')
+                            character_id = player_data_dict.get(player_puuid, {}).get('characterId')
+                            character_name = player_data_dict.get(player_puuid, {}).get('characterName')
+
                             # Filter by competitive tier and set mini_x and mini_y
                             if selected_tier is None or player_tier == selected_tier:
                                 death_coordinates.append({
                                     'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
                                     'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
                                     'player_puuid': player_puuid,
-                                    'player_tier': player_tier
+                                    'player_tier': player_tier,
+                                    'character_id': character_id,
+                                    'character_name': character_name  # Include character name
                                 })
 
+                                # Add character IDs to the set for uniqueness
+                                unique_character_ids.add(character_id)
+
+    # Create a list of unique characters
+    for character_id in unique_character_ids:
+        unique_character_list.append({
+            'character_id': character_id,
+            'character_name': character_mapping.get(character_id, "Unknown Character")
+        })
+
     mini_map_coordinates = []
+
     for death in death_coordinates:
         mini_x = death['x']
         mini_y = death['y']
@@ -344,14 +499,16 @@ def breeze():
             'x': mini_x,
             'y': mini_y,
             'player_puuid': death['player_puuid'],
-            'player_tier': death['player_tier']
+            'player_tier': death['player_tier'],
+            'character_id': death['character_id'],  # Store the UUID here
         })
+
 
     image_path = "valorant-app/static/map_images/breeze_image.png"
 
-    return render_template('breeze.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
+    return render_template('breeze.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates, 
+                        unique_character_list=unique_character_list, x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, 
+                        x_ScalarToAdd=x_ScalarToAdd, y_ScalarToAdd=y_ScalarToAdd)
 
 
 # ----------------------- lotus -----------------------
@@ -363,6 +520,8 @@ def lotus():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
+    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+        character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Jam/Jam'
     death_coordinates = []
@@ -374,13 +533,25 @@ def lotus():
     y_ScalarToAdd = map_data['yScalarToAdd']
 
     matches = match_data['matches']
+
+    # Create a set to store unique character IDs
+    unique_character_ids = set()
+    unique_character_list = []
+
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-            # Create a dictionary to map player puuids to competitive tiers
-            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+            # Create a dictionary to map player puuids to competitive tiers, character IDs, and character names
+            player_data_dict = {
+                player['puuid']: {
+                    'competitiveTier': player['competitiveTier'],
+                    'characterId': player['characterId'],
+                    'characterName': character_mapping.get(player['characterId'], "Unknown Character")
+                }
+                for player in match['players']
+            }
 
             # Iterate through player stats for each round
             for round_result in round_results:
@@ -394,18 +565,33 @@ def lotus():
 
                             # Check if the competitive tier matches the selected tier
                             player_puuid = player_stat['puuid']
-                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
-                        
+                            player_tier = player_data_dict.get(player_puuid, {}).get('competitiveTier')
+                            character_id = player_data_dict.get(player_puuid, {}).get('characterId')
+                            character_name = player_data_dict.get(player_puuid, {}).get('characterName')
+
                             # Filter by competitive tier and set mini_x and mini_y
                             if selected_tier is None or player_tier == selected_tier:
                                 death_coordinates.append({
                                     'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
                                     'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
                                     'player_puuid': player_puuid,
-                                    'player_tier': player_tier
+                                    'player_tier': player_tier,
+                                    'character_id': character_id,
+                                    'character_name': character_name  # Include character name
                                 })
 
+                                # Add character IDs to the set for uniqueness
+                                unique_character_ids.add(character_id)
+
+    # Create a list of unique characters
+    for character_id in unique_character_ids:
+        unique_character_list.append({
+            'character_id': character_id,
+            'character_name': character_mapping.get(character_id, "Unknown Character")
+        })
+
     mini_map_coordinates = []
+
     for death in death_coordinates:
         mini_x = death['x']
         mini_y = death['y']
@@ -413,14 +599,16 @@ def lotus():
             'x': mini_x,
             'y': mini_y,
             'player_puuid': death['player_puuid'],
-            'player_tier': death['player_tier']
+            'player_tier': death['player_tier'],
+            'character_id': death['character_id'],  # Store the UUID here
         })
+
 
     image_path = "valorant-app/static/map_images/lotus_image.png"
 
-    return render_template('lotus.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
+    return render_template('lotus.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates, 
+                        unique_character_list=unique_character_list, x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, 
+                        x_ScalarToAdd=x_ScalarToAdd, y_ScalarToAdd=y_ScalarToAdd)
 
 # ----------------------- pearl -----------------------
 @app.route("/pearl")
@@ -431,6 +619,8 @@ def pearl():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
+    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+        character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Pitt/Pitt'
     death_coordinates = []
@@ -442,13 +632,25 @@ def pearl():
     y_ScalarToAdd = map_data['yScalarToAdd']
 
     matches = match_data['matches']
+
+    # Create a set to store unique character IDs
+    unique_character_ids = set()
+    unique_character_list = []
+
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-            # Create a dictionary to map player puuids to competitive tiers
-            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+            # Create a dictionary to map player puuids to competitive tiers, character IDs, and character names
+            player_data_dict = {
+                player['puuid']: {
+                    'competitiveTier': player['competitiveTier'],
+                    'characterId': player['characterId'],
+                    'characterName': character_mapping.get(player['characterId'], "Unknown Character")
+                }
+                for player in match['players']
+            }
 
             # Iterate through player stats for each round
             for round_result in round_results:
@@ -462,18 +664,33 @@ def pearl():
 
                             # Check if the competitive tier matches the selected tier
                             player_puuid = player_stat['puuid']
-                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
-                        
+                            player_tier = player_data_dict.get(player_puuid, {}).get('competitiveTier')
+                            character_id = player_data_dict.get(player_puuid, {}).get('characterId')
+                            character_name = player_data_dict.get(player_puuid, {}).get('characterName')
+
                             # Filter by competitive tier and set mini_x and mini_y
                             if selected_tier is None or player_tier == selected_tier:
                                 death_coordinates.append({
                                     'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
                                     'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
                                     'player_puuid': player_puuid,
-                                    'player_tier': player_tier
+                                    'player_tier': player_tier,
+                                    'character_id': character_id,
+                                    'character_name': character_name  # Include character name
                                 })
 
+                                # Add character IDs to the set for uniqueness
+                                unique_character_ids.add(character_id)
+
+    # Create a list of unique characters
+    for character_id in unique_character_ids:
+        unique_character_list.append({
+            'character_id': character_id,
+            'character_name': character_mapping.get(character_id, "Unknown Character")
+        })
+
     mini_map_coordinates = []
+
     for death in death_coordinates:
         mini_x = death['x']
         mini_y = death['y']
@@ -481,14 +698,16 @@ def pearl():
             'x': mini_x,
             'y': mini_y,
             'player_puuid': death['player_puuid'],
-            'player_tier': death['player_tier']
+            'player_tier': death['player_tier'],
+            'character_id': death['character_id'],  # Store the UUID here
         })
+
 
     image_path = "valorant-app/static/map_images/pearl_image.png"
 
-    return render_template('pearl.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
+    return render_template('pearl.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates, 
+                        unique_character_list=unique_character_list, x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, 
+                        x_ScalarToAdd=x_ScalarToAdd, y_ScalarToAdd=y_ScalarToAdd)
 
 # ----------------------- icebox -----------------------
 @app.route("/icebox")
@@ -499,6 +718,8 @@ def icebox():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
+    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+        character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Port/Port'
     death_coordinates = []
@@ -510,13 +731,25 @@ def icebox():
     y_ScalarToAdd = map_data['yScalarToAdd']
 
     matches = match_data['matches']
+
+    # Create a set to store unique character IDs
+    unique_character_ids = set()
+    unique_character_list = []
+
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-            # Create a dictionary to map player puuids to competitive tiers
-            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+            # Create a dictionary to map player puuids to competitive tiers, character IDs, and character names
+            player_data_dict = {
+                player['puuid']: {
+                    'competitiveTier': player['competitiveTier'],
+                    'characterId': player['characterId'],
+                    'characterName': character_mapping.get(player['characterId'], "Unknown Character")
+                }
+                for player in match['players']
+            }
 
             # Iterate through player stats for each round
             for round_result in round_results:
@@ -530,18 +763,33 @@ def icebox():
 
                             # Check if the competitive tier matches the selected tier
                             player_puuid = player_stat['puuid']
-                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
-                        
+                            player_tier = player_data_dict.get(player_puuid, {}).get('competitiveTier')
+                            character_id = player_data_dict.get(player_puuid, {}).get('characterId')
+                            character_name = player_data_dict.get(player_puuid, {}).get('characterName')
+
                             # Filter by competitive tier and set mini_x and mini_y
                             if selected_tier is None or player_tier == selected_tier:
                                 death_coordinates.append({
                                     'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
                                     'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
                                     'player_puuid': player_puuid,
-                                    'player_tier': player_tier
+                                    'player_tier': player_tier,
+                                    'character_id': character_id,
+                                    'character_name': character_name  # Include character name
                                 })
 
+                                # Add character IDs to the set for uniqueness
+                                unique_character_ids.add(character_id)
+
+    # Create a list of unique characters
+    for character_id in unique_character_ids:
+        unique_character_list.append({
+            'character_id': character_id,
+            'character_name': character_mapping.get(character_id, "Unknown Character")
+        })
+
     mini_map_coordinates = []
+
     for death in death_coordinates:
         mini_x = death['x']
         mini_y = death['y']
@@ -549,14 +797,16 @@ def icebox():
             'x': mini_x,
             'y': mini_y,
             'player_puuid': death['player_puuid'],
-            'player_tier': death['player_tier']
+            'player_tier': death['player_tier'],
+            'character_id': death['character_id'],  # Store the UUID here
         })
+
 
     image_path = "valorant-app/static/map_images/icebox_image.png"
 
-    return render_template('icebox.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
+    return render_template('icebox.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates, 
+                        unique_character_list=unique_character_list, x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, 
+                        x_ScalarToAdd=x_ScalarToAdd, y_ScalarToAdd=y_ScalarToAdd)
 
 # ----------------------- haven -----------------------
 @app.route("/haven")
@@ -567,6 +817,8 @@ def haven():
         maps = json.load(json_file)
     with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
         match_data = json.load(map_file)
+    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+        character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Triad/Triad'
     death_coordinates = []
@@ -578,13 +830,25 @@ def haven():
     y_ScalarToAdd = map_data['yScalarToAdd']
 
     matches = match_data['matches']
+
+    # Create a set to store unique character IDs
+    unique_character_ids = set()
+    unique_character_list = []
+
     # Iterate through rounds and their results
     for match in matches:
         if match['matchInfo']['mapId'] == mapURL:
             round_results = match['roundResults']
 
-            # Create a dictionary to map player puuids to competitive tiers
-            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+            # Create a dictionary to map player puuids to competitive tiers, character IDs, and character names
+            player_data_dict = {
+                player['puuid']: {
+                    'competitiveTier': player['competitiveTier'],
+                    'characterId': player['characterId'],
+                    'characterName': character_mapping.get(player['characterId'], "Unknown Character")
+                }
+                for player in match['players']
+            }
 
             # Iterate through player stats for each round
             for round_result in round_results:
@@ -598,18 +862,33 @@ def haven():
 
                             # Check if the competitive tier matches the selected tier
                             player_puuid = player_stat['puuid']
-                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
-                        
+                            player_tier = player_data_dict.get(player_puuid, {}).get('competitiveTier')
+                            character_id = player_data_dict.get(player_puuid, {}).get('characterId')
+                            character_name = player_data_dict.get(player_puuid, {}).get('characterName')
+
                             # Filter by competitive tier and set mini_x and mini_y
                             if selected_tier is None or player_tier == selected_tier:
                                 death_coordinates.append({
                                     'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
                                     'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
                                     'player_puuid': player_puuid,
-                                    'player_tier': player_tier
+                                    'player_tier': player_tier,
+                                    'character_id': character_id,
+                                    'character_name': character_name  # Include character name
                                 })
 
+                                # Add character IDs to the set for uniqueness
+                                unique_character_ids.add(character_id)
+
+    # Create a list of unique characters
+    for character_id in unique_character_ids:
+        unique_character_list.append({
+            'character_id': character_id,
+            'character_name': character_mapping.get(character_id, "Unknown Character")
+        })
+
     mini_map_coordinates = []
+
     for death in death_coordinates:
         mini_x = death['x']
         mini_y = death['y']
@@ -617,14 +896,17 @@ def haven():
             'x': mini_x,
             'y': mini_y,
             'player_puuid': death['player_puuid'],
-            'player_tier': death['player_tier']
+            'player_tier': death['player_tier'],
+            'character_id': death['character_id'],  # Store the UUID here
         })
+
 
     image_path = "valorant-app/static/map_images/haven_image.png"
 
-    return render_template('haven.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
-                            x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd)
+    return render_template('haven.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates, 
+                        unique_character_list=unique_character_list, x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, 
+                        x_ScalarToAdd=x_ScalarToAdd, y_ScalarToAdd=y_ScalarToAdd)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
