@@ -25,43 +25,6 @@ def ascent():
 
     mapURL = '/Game/Maps/Ascent/Ascent'
     death_coordinates = []
-    round_results = []
-
-    # Create a dictionary to map player puuids to competitive tiers
-    player_tiers_dict = {}
-
-    matches = match_data['matches']
-    # Iterate through rounds and their results
-    for match in matches:
-        if match['matchInfo']['mapId'] == mapURL:
-            round_results = match['roundResults']
-
-        # Iterate through player stats for each round
-        for round_result in round_results:
-            for player_stat in round_result['playerStats']:
-                kills = player_stat['kills']
-
-                # Iterate through kills for each player
-                for kill in kills:
-                    if 'victimLocation' in kill:
-                        victim_location = kill['victimLocation']
-
-                        # Check if the competitive tier matches the selected tier
-                        player_puuid = player_stat['puuid']
-                        player_tier = None
-                        
-                        # Find the player's tier based on their puuid
-                        for player in match['players']:
-                            if player['puuid'] == player_puuid:
-                                player_tier = player['competitiveTier']
-                                break
-
-                        # Add the player's tier to the dictionary
-                        player_tiers_dict[player_puuid] = player_tier
-
-                        # Filter by competitive tier
-                        if selected_tier is None or player_tier == selected_tier:
-                            death_coordinates.append(victim_location)
 
     map_data = maps['data'][0]
     x_Multiplier = map_data['xMultiplier']
@@ -69,18 +32,54 @@ def ascent():
     x_ScalarToAdd = map_data['xScalarToAdd']
     y_ScalarToAdd = map_data['yScalarToAdd']
 
+    matches = match_data['matches']
+    # Iterate through rounds and their results
+    for match in matches:
+        if match['matchInfo']['mapId'] == mapURL:
+            round_results = match['roundResults']
+
+            # Create a dictionary to map player puuids to competitive tiers
+            player_tiers_dict = {player['puuid']: player['competitiveTier'] for player in match['players']}
+
+            # Iterate through player stats for each round
+            for round_result in round_results:
+                for player_stat in round_result['playerStats']:
+                    kills = player_stat['kills']
+
+                    # Iterate through kills for each player
+                    for kill in kills:
+                        if 'victimLocation' in kill:
+                            victim_location = kill['victimLocation']
+
+                            # Check if the competitive tier matches the selected tier
+                            player_puuid = player_stat['puuid']
+                            player_tier = player_tiers_dict.get(player_puuid)  # Get player tier from the dictionary
+                        
+                            # Filter by competitive tier and set mini_x and mini_y
+                            if selected_tier is None or player_tier == selected_tier:
+                                death_coordinates.append({
+                                    'x': victim_location['y'] * x_Multiplier + x_ScalarToAdd,
+                                    'y': victim_location['x'] * y_Multiplier + y_ScalarToAdd,
+                                    'player_puuid': player_puuid,
+                                    'player_tier': player_tier
+                                })
+
     mini_map_coordinates = []
     for death in death_coordinates:
-        mini_x = death['y'] * x_Multiplier + x_ScalarToAdd
-        mini_y = death['x'] * y_Multiplier + y_ScalarToAdd
-        mini_map_coordinates.append({'x': mini_x, 'y': mini_y})
+        mini_x = death['x']
+        mini_y = death['y']
+        mini_map_coordinates.append({
+            'x': mini_x,
+            'y': mini_y,
+            'player_puuid': death['player_puuid'],
+            'player_tier': death['player_tier']
+        })
 
-    image_path  = "valorant-app/static/map_images/ascent_image.png"
+    image_path = "valorant-app/static/map_images/ascent_image.png"
 
-    # Pass player_tiers_dict instead of player_tier
     return render_template('ascent.html', image_path=image_path, mini_map_coordinates=mini_map_coordinates,
                             x_Multiplier=x_Multiplier, y_Multiplier=y_Multiplier, x_ScalarToAdd=x_ScalarToAdd,
-                            y_ScalarToAdd=y_ScalarToAdd, player_tiers_dict=player_tiers_dict)
+                            y_ScalarToAdd=y_ScalarToAdd)
 
 # ----------------------- SPLIT -----------------------
 @app.route("/split")

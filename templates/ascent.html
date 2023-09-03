@@ -86,7 +86,6 @@
     // Get the map image element
     var mapImage = document.getElementById('mapImage');
     var tierDropdown = document.getElementById('tierDropdown');
-    var playerTiersDict = {{ player_tiers_dict | tojson }}; // Load the player tiers dictionary from Flask
 
     // Function to set the position of a coordinate marker
     function setPosition(marker, x, y) {
@@ -99,16 +98,19 @@
         var selectedTier = tierDropdown.value;
         var markers = document.querySelectorAll('.coordinateMarker');
 
-        markers.forEach(function(marker, index) {
-            var mini_map_coordinates = {{ mini_map_coordinates | tojson }};
-            var coordinate = mini_map_coordinates[index];
-            var mini_x = coordinate.x * mapImage.width;
-            var mini_y = coordinate.y * mapImage.height;
-            setPosition(marker, mini_x, mini_y);
+        var mini_map_coordinates = {{ mini_map_coordinates | tojson }};
+        console.log(mini_map_coordinates);
 
-            // Get the player's tier from the dictionary
-            var playerPuuid = mini_map_coordinates[index].player_puuid; 
-            var playerTier = playerTiersDict[playerPuuid];
+        markers.forEach(function(marker, index) {
+            // Get the player's tier from the coordinate object
+            var playerTier = mini_map_coordinates[index].player_tier;
+
+            // Scale the coordinates based on image width and height
+            var mini_x = mini_map_coordinates[index].x * mapImage.width;
+            var mini_y = mini_map_coordinates[index].y * mapImage.height;
+
+            // Set the position of the marker
+            setPosition(marker, mini_x, mini_y);
 
             // Hide or show markers based on the selected tier
             if (selectedTier === "" || playerTier === selectedTier) {
