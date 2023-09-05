@@ -49,6 +49,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/e370fa57-4757-3604-3648-499e1f642d3f/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Breaker_PrimaryDataAsset",
                 "description": "Initiators challenge angles by setting up their team to enter contested ground and push defenders away.",
@@ -118,6 +119,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/dade69b4-4f5a-8528-247b-219e5a1facd6/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Breaker_PrimaryDataAsset",
                 "description": "Initiators challenge angles by setting up their team to enter contested ground and push defenders away.",
@@ -187,6 +189,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/5f8d3a7f-467b-97f3-062c-13acf203c006/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Breaker_PrimaryDataAsset",
                 "description": "Initiators challenge angles by setting up their team to enter contested ground and push defenders away.",
@@ -256,6 +259,15 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/cc8b64c8-4b25-4ff9-6e7f-37b4da43d235/killfeedportrait.png",
+            "recruitmentData": {
+                "counterId": "7ec37a1e-4526-77dd-1afd-e2ab3b624085",
+                "endDate": "2023-07-25T21:00:00Z",
+                "levelVpCostOverride": 0,
+                "milestoneId": "fcca98dc-4a83-2837-9512-f88a0a08fcfd",
+                "milestoneThreshold": 200000,
+                "startDate": "2023-06-27T00:00:00Z",
+                "useLevelVpCostOverride": false
+            },
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Sentinel_PrimaryDataAsset",
                 "description": "Sentinels are defensive experts who can lock down areas and watch flanks, both on attacker and defender rounds.",
@@ -327,6 +339,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/f94c3b30-42be-e959-889c-5aa313dba261/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Assault_PrimaryDataAsset",
                 "description": "Duelists are self-sufficient fraggers who their team expects, through abilities and skills, to get high frags and seek out engagements first.",
@@ -396,6 +409,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/22697a3d-45bf-8dd7-4fec-84a9e28c69d7/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Sentinel_PrimaryDataAsset",
                 "description": "Sentinels are defensive experts who can lock down areas and watch flanks, both on attacker and defender rounds.",
@@ -465,6 +479,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/601dbbe7-43ce-be57-2a40-4abd24953621/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Breaker_PrimaryDataAsset",
                 "description": "Initiators challenge angles by setting up their team to enter contested ground and push defenders away.",
@@ -534,6 +549,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/6f2a04ca-43e0-be17-7f36-b3908627744d/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Breaker_PrimaryDataAsset",
                 "description": "Initiators challenge angles by setting up their team to enter contested ground and push defenders away.",
@@ -606,6 +622,7 @@
             "isFullPortraitRightFacing": true,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/117ed9e3-49f3-6512-3ccf-0cada7e3823b/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Sentinel_PrimaryDataAsset",
                 "description": "Sentinels are defensive experts who can lock down areas and watch flanks, both on attacker and defender rounds.",
@@ -684,6 +701,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": false,
             "killfeedPortrait": "https://media.valorant-api.com/agents/ded3520f-4264-bfed-162d-b080e2abccf9/killfeedportrait.png",
+            "recruitmentData": null,
             "role": null,
             "uuid": "ded3520f-4264-bfed-162d-b080e2abccf9",
             "voiceLine": {
@@ -756,6 +774,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/320b2a48-4d9b-a075-30f1-1f93a9b638fa/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Breaker_PrimaryDataAsset",
                 "description": "Initiators challenge angles by setting up their team to enter contested ground and push defenders away.",
@@ -828,6 +847,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/1e58de9c-4950-5125-93e9-a0aee9f98746/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Sentinel_PrimaryDataAsset",
                 "description": "Sentinels are defensive experts who can lock down areas and watch flanks, both on attacker and defender rounds.",
@@ -897,6 +917,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/95b78ed7-4637-86d9-7e41-71ba8c293152/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Strategist_PrimaryDataAsset",
                 "description": "Controllers are experts in slicing up dangerous territory to set their team up for success.",
@@ -974,6 +995,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/707eab51-4836-f488-046a-cda6bf494859/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Strategist_PrimaryDataAsset",
                 "description": "Controllers are experts in slicing up dangerous territory to set their team up for success.",
@@ -1052,6 +1074,7 @@
             "isFullPortraitRightFacing": true,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/eb93336a-449b-9c1b-0a54-a891f7921d69/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Assault_PrimaryDataAsset",
                 "description": "Duelists are self-sufficient fraggers who their team expects, through abilities and skills, to get high frags and seek out engagements first.",
@@ -1127,6 +1150,7 @@
             "isFullPortraitRightFacing": true,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/41fb69c1-4189-7b37-f117-bcaf1e96f1bf/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Strategist_PrimaryDataAsset",
                 "description": "Controllers are experts in slicing up dangerous territory to set their team up for success.",
@@ -1199,6 +1223,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/9f0d8ba9-4140-b941-57d3-a7ad57c6b417/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Strategist_PrimaryDataAsset",
                 "description": "Controllers are experts in slicing up dangerous territory to set their team up for success.",
@@ -1268,6 +1293,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/bb2a4828-46eb-8cd1-e765-15848195d751/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Assault_PrimaryDataAsset",
                 "description": "Duelists are self-sufficient fraggers who their team expects, through abilities and skills, to get high frags and seek out engagements first.",
@@ -1337,6 +1363,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/7f94d92c-4234-0a36-9646-3a87eb8b5c89/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Assault_PrimaryDataAsset",
                 "description": "Duelists are self-sufficient fraggers who their team expects, through abilities and skills, to get high frags and seek out engagements first.",
@@ -1409,6 +1436,7 @@
             "isFullPortraitRightFacing": true,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Sentinel_PrimaryDataAsset",
                 "description": "Sentinels are defensive experts who can lock down areas and watch flanks, both on attacker and defender rounds.",
@@ -1481,6 +1509,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/a3bfb853-43b2-7238-a4f1-ad90e9e46bcc/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Assault_PrimaryDataAsset",
                 "description": "Duelists are self-sufficient fraggers who their team expects, through abilities and skills, to get high frags and seek out engagements first.",
@@ -1553,6 +1582,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Strategist_PrimaryDataAsset",
                 "description": "Controllers are experts in slicing up dangerous territory to set their team up for success.",
@@ -1631,6 +1661,7 @@
             "isFullPortraitRightFacing": false,
             "isPlayableCharacter": true,
             "killfeedPortrait": "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/killfeedportrait.png",
+            "recruitmentData": null,
             "role": {
                 "assetPath": "ShooterGame/Content/Characters/_Core/Roles/Assault_PrimaryDataAsset",
                 "description": "Duelists are self-sufficient fraggers who their team expects, through abilities and skills, to get high frags and seek out engagements first.",
