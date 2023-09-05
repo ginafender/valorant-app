@@ -55,7 +55,7 @@ y *= image.Height;```. The last function used is the ```mapImage.onload```. By c
 
 ## Machine Learning
 1. valorant_mlm.ipynb
-   - This
+   - Once our data was loaded and prepared using the sqlite database and Pandas Dataframes, we compiled, fitted and trained numerous models using said data to determine the most important game factors for winning a game of Valorant. Relevant areas of data from Valorant games that were chosen were a player's agent, amount of rounds played, kills, deaths, assists, etc. The types of models we used in the process to come to our conclusion were neural networks, a logistic Regression model and a decision tree model.
 
 # Run Sequence 
 
