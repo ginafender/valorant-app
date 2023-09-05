@@ -1,6 +1,6 @@
 # Project 4
 ## An interactive data analysis of the video game VALORANT that helps new players better understand the game and its current metas.
-Link to presentation: (https://github.com/ginafender/valorant-app/blob/main/Valorant%20PowerPoint.pptx)
+Link to presentation: (https://github.com/ginafender/valorant-app/blob/main/Valorant%20Final%20PowerPoint.pptx))
 
 - Group Members:
 	- Gina Fender
