@@ -55,6 +55,10 @@ y *= image.Height;```. The last function used is the ```mapImage.onload```. By c
 4. ER.PNG
    - This
 
+## Machine Learning
+1. valorant_mlm.ipynb
+   - This
+
 # Run Sequence 
 
 The dashboard is ran through Flask, so to deploy it, one must download the relevant files and launch the site using ```python app.py``` in the terminal. This will return a local host link. Following the link will take you directly to the web page. 
