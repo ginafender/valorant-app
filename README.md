@@ -48,12 +48,10 @@ y *= image.Height;```. The last function used is the ```mapImage.onload```. By c
 	- This folder contains any other images used on the site.
 
 ## SQLite Folder
-1. Valorant.sqlite
-   - This
-3. schema.ipynb
-   - This
-4. ER.PNG
-   - This
+1. schema.ipynb
+   - Utilizing sqlalchemy we create classes for the tables and extract the data into a sqlite database. This allows the data to be easily read and pulled for the machine learning model and creates a simplified frame for future flask applications
+2. ER.png
+   - This image is a quick snapshot showing the relationships between the datasets in each table.
 
 ## Machine Learning
 1. valorant_mlm.ipynb
