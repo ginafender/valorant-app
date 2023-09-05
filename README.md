@@ -10,6 +10,7 @@ Link to presentation: (https://github.com/ginafender/valorant-app/blob/main/Valo
 	- Naomi Martin
 
 ## Project Description
+Our project was to create an interactive website that would allow new players to better understand the game Valorant. By using our website and looking at our data, these players can analyze the gameplay of others areound their own skill level, and begin to improve their own gameplay. When loading the website, the player starts out on the main page. Each individual map has a tab that links to a new page for that map. Once loaded into the new page, an image of the map and all of the death coordinate markers will populate. These markers can be filtered by competitive tier, by what character the person was playing, or by both. This will help the player to see where common death locations are, and what areas of the map should be played passively or aggresively. 
 
 - Data Source:
   - Match Data: https://stelar7.no/valorant/
@@ -32,25 +33,27 @@ y *= image.Height;```. The last function used is the ```mapImage.onload```. By c
 
 ## Json Folder
 1. maps.ipynb
-	-  
-2. valorant.ipynb
-   -
-3. characters.ipynb
-   -
-4. characterMapping.json
-   -
+   - This jupyter notebook was used to extract json information about the maps from the api.
+3. valorant.ipynb
+   - This jupyter notebook was used to extract json information about the matches from the api.
+4. characters.ipynb
+   - This jupyter notebook was used to extract json information about the characters from the api
+5. characterMapping.json
+   - This json file was created to be used to dynamically map character options to the webpage dropdown. By creating this json file where every ```key``` is the uuid of the character, and every ```value``` is the name of the character, the flask routes can link the two together and and the **name** value to the dropdown box for better readability. By dynamically coding the dropdown box, we can have only the characters that we have data for populate the dropdown box and avoid potentially cluttering the readability of the options list.
 
 ## Static Folder
 1. map_images
-	- 
+	- This folder contains all the images pertaining to each map. The images titled ```image```, i.e ```ascent_image.png```, are the full size map images used to populate the death coordinate markers. The images titled ```splash```, i.e ```ascent_splash.png```, are the header images displayed at the top of each page.
 2. website_images
-	- 
+	- This folder contains any other images used on the site.
 
 ## SQLite Folder
 1. Valorant.sqlite
-	- 
-2. schema.ipynb
-	- 
+   - 
+3. schema.ipynb
+   -
+4. ER.PNG
+   -
 
 # Run Sequence 
 
