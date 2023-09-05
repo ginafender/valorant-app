@@ -16,13 +16,14 @@ def home():
 # ----------------------- ASCENT -----------------------
 @app.route("/ascent")
 def ascent():
+    """ Function for ascent map route """
     selected_tier = request.args.get('tier')  # Get the selected tier from request args
 
-    with open("..//valorant-app/json/valorantmaps.json", "r") as json_file:
+    with open("..//valorant-app/json/valorantmaps.json", "r", encoding="utf-8") as json_file:
         maps = json.load(json_file)
-    with open("..//valorant-app/json/valorantmatches.json", "r") as map_file:
+    with open("..//valorant-app/json/valorantmatches.json", "r", encoding="utf-8") as map_file:
         match_data = json.load(map_file)
-    with open("..//valorant-app/json/characterMapping.json", "r") as char_map_file:
+    with open("..//valorant-app/json/characterMapping.json", "r", encoding="utf-8") as char_map_file:
         character_mapping = json.load(char_map_file)
 
     mapURL = '/Game/Maps/Ascent/Ascent'
